@@ -1,1 +1,68 @@
-﻿
+﻿@model PhuKienCongNghe.Models.Sanpham
+
+@{
+    ViewData["Title"] = Model.TenSanPham; // Đặt tiêu đề tab trình duyệt
+}
+
+<div class="container my-5">
+    <div class="row">
+
+        <div class="col-lg-6">
+            <img src="@(string.IsNullOrEmpty(Model.HinhAnh) ? "https://via.placeholder.com/500" : Model.HinhAnh)"
+                 class="img-fluid rounded shadow-sm" alt="@Model.TenSanPham">
+        </div>
+
+        <div class="col-lg-6">
+            <h1 class="display-5">@Model.TenSanPham</h1>
+
+            <p class="lead text-muted">
+                Danh mục:
+                <a asp-controller="Product" asp-action="Category" asp-route-id="@Model.MaDanhMuc">
+                    @Model.MaDanhMucNavigation.TenDanhMuc
+                </a>
+            </p>
+
+            <h2 class="text-danger fw-bold my-3">@Model.Gia.ToString("N0") đ</h2>
+
+            <p class="text-muted">
+                (Còn <strong class="text-dark">@Model.SoLuongTon</strong> sản phẩm)
+            </p>
+
+            <hr>
+
+            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                <input type="hidden" name="id" value="@Model.MaSanPham" />
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="soLuong" class="form-label">Số lượng:</label>
+                        <div class="input-group">
+                            <input type="number" name="soLuong" id="soLuong"
+                                   class="form-control text-center"
+                                   value="1"
+                                   min="1"
+                                   max="@Model.SoLuongTon">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-brand btn-lg">
+                        <i class="bi bi-cart-plus-fill"></i>
+                        Thêm vào giỏ
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Mô tả sản phẩm</h3>
+            <div class="p-3 bg-light rounded">
+                @Html.Raw(Model.MoTa)
+            </div>
+        </div>
+    </div>
+</div>

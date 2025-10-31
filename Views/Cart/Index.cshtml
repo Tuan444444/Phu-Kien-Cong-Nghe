@@ -1,1 +1,222 @@
-﻿
+﻿@model IEnumerable<PhuKienCongNghe.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Giỏ hàng của bạn";
+    // Chúng ta sẽ không cần "tongTien" ở đây nữa vì JavaScript sẽ tính
+}
+
+<div class="container my-5">
+    <h2>Giỏ hàng của bạn</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center p-5 border rounded">
+            <p class="fs-4">Giỏ hàng của bạn đang trống.</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-brand">Tiếp tục mua sắm</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 5%">
+                                <input class="form-check-input" type="checkbox" id="check-all">
+                            </th>
+                            <th scope="col" colspan="2">Sản phẩm</th>
+                            <th scope="col">Giá</th>
+                            <th scope="col">Số lượng</th>
+                            <th scope="col">Thành tiền</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="cart-row">
+                                <td>
+                                    <input class="form-check-input cart-item-check" 
+                                           type="checkbox" 
+                                           value="@item.MaSanPham"
+                                           data-price="@item.Gia"> 
+                                </td>
+
+                                <td style="width: 100px;">
+                                    <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "https://via.placeholder.com/100" : item.HinhAnh)"
+                                         class="img-fluid rounded" alt="@item.TenSanPham">
+                                </td>
+                                <td>@item.TenSanPham</td>
+                                <td>@item.Gia.ToString("N0") đ</td>
+
+                                <td style="width: 120px;">
+                                    <input type="number"
+                                           class="form-control form-control-sm text-center cart-quantity-input"
+                                           value="@item.SoLuong"
+                                           min="1"
+                                           data-id="@item.MaSanPham">
+                                </td>
+
+                                <td class="fw-bold" id="item-total-@item.MaSanPham">
+                                    @item.ThanhTien.ToString("N0") đ
+                                </td>
+
+                                <td>
+                                    <a asp-controller="Cart" asp-action="RemoveFromCart" asp-route-id="@item.MaSanPham"
+                                       class="btn btn-danger btn-sm" title="Xóa khỏi giỏ hàng">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            </div> <div class="row sticky-bottom bg-white shadow-lg p-3 border-top">
+            <div class="col-md-6 d-flex align-items-center">
+                <input class="form-check-input me-2" type="checkbox" id="check-all-footer">
+                <label class="form-check-label" for="check-all-footer">
+                    Chọn tất cả (@Model.Count())
+                </label>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end align-items-center">
+                <div class="me-3">
+                    <span>Tổng thanh toán (<span id="selected-count">0</span> sản phẩm):</span>
+                    <strong class="fs-4 text-danger ms-2" id="cart-total-summary">0 đ</strong>
+                </div>
+                <button type="button" class="btn btn-brand" id="btn-checkout">
+                    Mua hàng
+                </button>
+            </div>
+        </div>
+        
+    }
+</div>
+
+   @section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // ==================================================================
+            // HÀM CHÍNH: TÍNH TOÁN VÀ CẬP NHẬT TỔNG TIỀN
+            // ==================================================================
+            function updateCartSummary() {
+                var total = 0;
+                var selectedCount = 0;
+                var selectedIds = []; // Mảng chứa ID sản phẩm được chọn
+                var allChecked = true;
+                var totalItems = $('.cart-item-check').length;
+
+                // 1. Lặp qua TẤT CẢ các hàng
+                $('.cart-row').each(function () {
+                    var row = $(this);
+                    var checkbox = row.find('.cart-item-check');
+                    
+                    if (checkbox.is(':checked')) {
+                        // Nếu được TÍCH:
+                        var price = parseFloat(checkbox.data('price')); // Lấy giá (từ data-price)
+                        var quantity = parseInt(row.find('.cart-quantity-input').val()); // Lấy số lượng
+                        var productId = parseInt(checkbox.val()); // Lấy MaSanPham
+                        
+                        total += price * quantity; // Cộng vào tổng
+                        selectedCount++;
+                        selectedIds.push(productId);
+                    } else {
+                        // Nếu 1 cái không được tích
+                        allChecked = false; 
+                    }
+                });
+
+                // 2. Cập nhật giao diện (Tổng tiền, Số SP)
+                $('#cart-total-summary').text(total.toLocaleString('vi-VN') + ' đ');
+                $('#selected-count').text(selectedCount);
+                $('#btn-checkout').text('Mua hàng (' + selectedCount + ')');
+
+                // 3. Cập nhật 2 nút "Chọn tất cả"
+                var finalCheckState = (totalItems > 0 && allChecked);
+                $('#check-all, #check-all-footer').prop('checked', finalCheckState);
+
+                // 4. Trả về mảng ID để dùng cho nút "Mua Hàng"
+                return selectedIds;
+            }
+
+            // ==================================================================
+            // CÁC SỰ KIỆN (EVENT LISTENERS)
+            // ==================================================================
+
+            // 1. KHI BẤM NÚT "CHỌN TẤT CẢ" (header hoặc footer)
+            // (Thực hiện yêu cầu "tích vào chọn tất cả" của bạn)
+            $('#check-all, #check-all-footer').on('change', function () {
+                var isChecked = $(this).is(':checked');
+                
+                // Set TẤT CẢ checkbox sản phẩm theo nút này
+                $('.cart-item-check').prop('checked', isChecked);
+                // Đồng bộ 2 nút "Chọn tất cả" với nhau
+                $('#check-all, #check-all-footer').prop('checked', isChecked); 
+                
+                updateCartSummary(); // Tính lại tổng tiền
+            });
+
+            // 2. KHI BẤM VÀO 1 CHECKBOX CỦA SẢN PHẨM
+            // (Thực hiện yêu cầu "hiển thị luôn tổng tiền" của bạn)
+            $('.cart-item-check').on('change', function () {
+                updateCartSummary(); // Tính lại tổng tiền
+            });
+
+            // 3. KHI THAY ĐỔI SỐ LƯỢNG (Code cũ + gọi hàm update)
+            $('.cart-quantity-input').on('change', function () {
+                var input = $(this);
+                var productId = input.data('id');
+                var quantity = input.val();
+
+                $.ajax({
+                    url: '@Url.Action("UpdateCartAjax", "Cart")', 
+                    type: 'POST',
+                    data: { id: productId, soLuong: quantity },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#item-total-' + productId).text(response.itemTotal);
+                            
+                            // GỌI LẠI HÀM TÍNH TỔNG
+                            // Vì số lượng thay đổi, tổng tiền (nếu được chọn) cũng phải đổi
+                            updateCartSummary(); 
+                        } else {
+                            alert("Có lỗi xảy ra, vui lòng tải lại trang.");
+                        }
+                    },
+                    error: function () {
+                        alert("Không thể kết nối đến máy chủ.");
+                    }
+                });
+            });
+
+            // 4. KHI BẤM NÚT "MUA HÀNG"
+            $('#btn-checkout').on('click', function() {
+                
+                // Gọi hàm tính tiền lần cuối để lấy mảng ID
+                var selectedIds = updateCartSummary();
+
+                if (selectedIds.length === 0) {
+                    alert('Bạn chưa chọn sản phẩm nào để mua.');
+                    return; // Ngăn không cho đi tiếp
+                }
+
+                // Xây dựng chuỗi query, ví dụ: ?ids=1&ids=3&ids=5
+                var queryString = selectedIds.map(function(id) {
+                    return 'ids=' + id;
+                }).join('&');
+
+                // Chuyển hướng người dùng đến trang Checkout (sẽ tạo ở bước sau)
+                window.location.href = '@Url.Action("Index", "Checkout")' + '?' + queryString;
+            });
+
+            // 5. CHẠY LẦN ĐẦU KHI TẢI TRANG
+            // (Để đảm bảo tổng tiền ban đầu là 0 đ)
+            updateCartSummary();
+
+        });
+    </script>
+}
+}

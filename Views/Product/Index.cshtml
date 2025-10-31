@@ -1,0 +1,49 @@
+﻿@model IEnumerable<PhuKienCongNghe.Models.Sanpham>
+
+@{
+    ViewData["Title"] = "Tất cả sản phẩm";
+}
+
+<div class="container my-5">
+
+    <h2 class="text-center mb-4">Tất cả sản phẩm</h2>
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 product-card">
+
+                    <a asp-action="Details" asp-controller="Products" asp-route-id="@item.MaSanPham">
+                        <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "https://via.placeholder.com/300x300.png?text=No+Image" : item.HinhAnh)"
+                             class="card-img-top p-3" alt="@item.TenSanPham">
+                    </a>
+
+                    <div class="card-body p-3 d-flex flex-column">
+                        <h5 class="card-title">
+                            <a asp-action="Details" asp-controller="Products" asp-route-id="@item.MaSanPham" class="text-decoration-none text-dark">
+                                @item.TenSanPham
+                            </a>
+                        </h5>
+
+                        <div class="product-price mb-2 mt-auto">
+                            <span class="fw-bold text-danger fs-5">@item.Gia.ToString("N0") đ</span>
+                        </div>
+
+                        <div class="mt-2">
+                            <a class="btn btn-sm btn-brand"
+                               asp-controller="Products"
+                               asp-action="Details"
+                               asp-route-id="@item.MaSanPham">Xem chi tiết</a>
+
+                            <a class="btn btn-sm btn-outline-secondary"
+                               asp-controller="Cart"
+                               asp-action="AddToCart"
+                               asp-route-id="@item.MaSanPham">Thêm vào giỏ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
