@@ -42,10 +42,14 @@ namespace PhuKienCongNghe.Controllers
         {
             // Dùng hàm "Set" từ file SessionExtensions.cs của bạn
             HttpContext.Session.Set(CARTKEY, cart);
+            // Tính tổng SỐ LƯỢNG (Quantity) của tất cả items
+            int totalQuantity = cart.Sum(item => item.SoLuong);
+            // Lưu tổng số lượng vào một Session key MỚI
+            HttpContext.Session.SetInt32("CartCount", totalQuantity);
         }
 
         // === KẾT THÚC HÀM NỘI BỘ == 
-        [HttpPost]
+      //  [HttpPost]
         public async Task<IActionResult> AddToCart(int id, int soLuong = 1)
         {
             // Tìm sản phẩm trong database
@@ -132,6 +136,8 @@ namespace PhuKienCongNghe.Controllers
                 // Tính toán tổng tiền mới
                 double itemTotal = cartItem.ThanhTien;
                 double cartTotal = cart.Sum(item => item.ThanhTien);
+                int totalQuantity = cart.Sum(item => item.SoLuong);
+                totalQuantity = totalQuantity;
 
                 // Trả về kết quả dạng JSON
                 return Json(new
