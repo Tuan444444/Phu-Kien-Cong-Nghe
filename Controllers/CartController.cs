@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore; // Cần để dùng DbContext
 using PhuKienCongNghe.Data;
 using PhuKienCongNghe.Extensions; // Dùng file SessionExtensions.cs của bạn
-using PhuKienCongNghe.Models;      // Dùng Models của bạn (Sanpham, CartItem)
+using PhuKienCongNghe.Models;      // Dùng Models của bạn (Sanpham)
+using PhuKienCongNghe.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,19 +27,19 @@ namespace PhuKienCongNghe.Controllers
         // === CÁC HÀM NỘI BỘ (PRIVATE) ===
 
         // Hàm nội bộ để LẤY giỏ hàng từ Session
-        private List<CartItem> GetCartItems()
+        private List<CartItemViewModel> GetCartItems()
         {
             // Dùng hàm "Get" từ file SessionExtensions.cs của bạn
-            var cart = HttpContext.Session.Get<List<CartItem>>(CARTKEY);
+            var cart = HttpContext.Session.Get<List<CartItemViewModel>>(CARTKEY);
             if (cart == null)
             {
-                cart = new List<CartItem>(); // Nếu chưa có giỏ hàng, tạo 1 list rỗng
+                cart = new List<CartItemViewModel>(); // Nếu chưa có giỏ hàng, tạo 1 list rỗng
             }
             return cart;
         }
 
         // Hàm nội bộ để LƯU giỏ hàng vào Session
-        private void SaveCartSession(List<CartItem> cart)
+        private void SaveCartSession(List<CartItemViewModel> cart)
         {
             // Dùng hàm "Set" từ file SessionExtensions.cs của bạn
             HttpContext.Session.Set(CARTKEY, cart);
@@ -73,7 +74,7 @@ namespace PhuKienCongNghe.Controllers
             else
             {
                 // Nếu chưa có, tạo mới 1 CartItem từ Sanpham
-                cartItem = new CartItem
+                cartItem = new CartItemViewModel
                 {
                     MaSanPham = id,
                     TenSanPham = sanpham.TenSanPham,
