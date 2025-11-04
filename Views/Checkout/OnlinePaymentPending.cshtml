@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Thanh toán trực tuyến";
+}
+<div class="container text-center mt-5">
+    <h2>Chức năng đang phát triển</h2>
+    <p>
+        Bạn đã chọn thanh toán trực tuyến cho đơn hàng trị giá:
+        <strong>@TempData["PaymentAmount"]?.ToString() đ</strong>
+    </p>
+    <p>Hiện tại, chức năng này đang được tích hợp. Vui lòng quay lại và chọn COD.</p>
+    <a asp-action="Index" asp-controller="Checkout" class="btn btn-secondary">Quay lại</a>
+</div>

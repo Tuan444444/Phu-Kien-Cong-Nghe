@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+ï»¿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PhuKienCongNghe.Data;
 
@@ -6,13 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. ??ng ký DbContext
+// 2. ??ng kÃ½ DbContext
 builder.Services.AddDbContext<PhukiencongngheDbContext>(options =>
-    options.UseSqlServer(connectionString)); // <-- THAY ??I ? ?ÂY
-// 3. ??ng ký d?ch v? cho Controllers và Views
+    options.UseSqlServer(connectionString)); // <-- THAY ??I ? ?Ã‚Y
+// 3. ??ng kÃ½ d?ch v? cho Controllers vÃ  Views
 builder.Services.AddControllersWithViews();
 
-// 4. ??ng ký d?ch v? Session
+// 4. ??ng kÃ½ d?ch v? Session
 builder.Services.AddDistributedMemoryCache(); // C?n thi?t cho session
 builder.Services.AddSession(options =>
 {
@@ -21,10 +21,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// 5. ??ng ký d?ch v? HttpContextAccessor (?? l?y session trong service)
+// 5. ??ng kÃ½ d?ch v? HttpContextAccessor (?? l?y session trong service)
 builder.Services.AddHttpContextAccessor();
 
-// 6. C?u hình Xác th?c b?ng Cookie
+// 6. C?u hÃ¬nh XÃ¡c th?c b?ng Cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -47,10 +47,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession(); // Kích ho?t Session
+app.UseSession(); // KÃ­ch ho?t Session
 
-app.UseAuthentication(); // Kích ho?t Xác th?c
-app.UseAuthorization(); // Kích ho?t Phân quy?n
+app.UseAuthentication(); // KÃ­ch ho?t XÃ¡c th?c
+app.UseAuthorization(); // KÃ­ch ho?t PhÃ¢n quy?n
 
 app.MapControllerRoute(
     name: "default",
