@@ -2,19 +2,32 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" href="#">Chào, @User.Identity.Name!</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-    </li>
+    <div class="dropdown">
+        <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-user"></i> @User.Identity.Name
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
+            <li><a class="dropdown-item" asp-controller="User" asp-action="Profile">Thông tin cá nhân</a></li>
+            <li><a class="dropdown-item" asp-controller="User" asp-action="OrderHistory">Lịch sử mua hàng</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="dropdown-item text-danger fw-semibold">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Đăng ký</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-    </li>
+    <div class="d-flex">
+        <a asp-controller="Account" asp-action="Login" class="btn btn-login me-2">
+            <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+        </a>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary">
+            <i class="fa-solid fa-user-plus"></i> Đăng ký
+        </a>
+    </div>
 }

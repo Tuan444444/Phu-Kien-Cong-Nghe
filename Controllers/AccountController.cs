@@ -18,67 +18,100 @@ namespace PhuKienCongNghe.Controllers
             _context = context;
         }
 
+        //===========================================================
+        // CHỨC NĂNG LOGIN
+        //===========================================================
+
         [HttpGet]
         public IActionResult Login(string? returnUrl)
         {
+            // Lưu lại returnUrl để chuyển hướng người dùng về trang họ muốn sau khi login
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = await _context.Nguoidungs.FirstOrDefaultAsync(u => u.TenDangNhap == model.TenDangNhap);
+                var user = await _context.Nguoidungs
+                                 .FirstOrDefaultAsync(u => u.TenDangNhap == model.TenDangNhap);
 
-                if (user != null)
+                if (user == null)
                 {
-                    // Lỗi bảo mật nghiêm trọng trong CSDL của bạn!
-                    // Chúng ta phải kiểm tra mật khẩu đã băm
-                    // Mã kiểm tra mật khẩu plaintext (KHÔNG NÊN DÙNG): if (user.MatKhau == model.MatKhau)
-
-                    // Mã kiểm tra mật khẩu đã băm (ĐÚNG)
-                    if (BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
-                    {
-                        // Tạo các "Claims" (thông tin định danh)
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, user.TenDangNhap),
-                            new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
-                            new Claim(ClaimTypes.Role, user.VaiTro) // "admin" hoặc "user"
-                            // Thêm các claim khác nếu cần (Email, HoTen...)
-                        };
-
-                        var claimsIdentity = new ClaimsIdentity(
-                            claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        var authProperties = new AuthenticationProperties
-                        {
-                            // Có thể thêm các thuộc tính khác như IsPersistent (ghi nhớ đăng nhập)
-                        };
-
-                        // Đăng nhập
-                        await HttpContext.SignInAsync(
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            new ClaimsPrincipal(claimsIdentity),
-                            authProperties);
-
-                        // Chuyển hướng về trang trước đó (nếu có)
-                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                        {
-                            return Redirect(returnUrl);
-                        }
-
-                        return RedirectToAction("Index", "Home");
-                    }
+                    ModelState.AddModelError(string.Empty, "Tên đăng nhập không tồn tại.");
+                    return View(model);
                 }
 
-                ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không đúng.");
+                // Kiểm tra mật khẩu đã băm
+                // (Giả định bạn đã cài: dotnet add package BCrypt.Net-Next)
+                if (BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
+                {
+                    // Tạo các "Claims" (thông tin định danh của user)
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
+                        new Claim(ClaimTypes.Name, user.TenDangNhap),
+                        new Claim(ClaimTypes.Role, user.VaiTro)
+                        // Bạn có thể thêm các Claim khác như Email, HoTen...
+                    };
+
+                    // Tạo ClaimsIdentity
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        // Cho phép "Ghi nhớ tôi" (chưa làm)
+                        // IsPersistent = model.RememberMe
+                    };
+
+                    // Đăng nhập người dùng (tạo cookie xác thực)
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    // Chuyển hướng về trang họ muốn
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
+                    // Nếu không, về trang chủ
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Sai mật khẩu
+                ModelState.AddModelError(string.Empty, "Sai mật khẩu.");
+                return View(model);
             }
+
+            // Nếu model không hợp lệ (ví dụ: bỏ trống), hiển thị lại form
             return View(model);
         }
 
+        //===========================================================
+        // CHỨC NĂNG LOGOUT
+        //===========================================================
+
+        // Dùng HttpPost để tránh lỗi CSRF
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            // Xóa cookie xác thực
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // Về trang chủ
+            return RedirectToAction("Index", "Home");
+        }
+
+        //===========================================================
+        // CHỨC NĂNG REGISTER (Thêm vào để _LoginPartial hoạt động)
+        //===========================================================
         [HttpGet]
         public IActionResult Register()
         {
@@ -86,11 +119,12 @@ namespace PhuKienCongNghe.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Kiểm tra Tên đăng nhập hoặc Email đã tồn tại chưa
+                // Kiểm tra Tên đăng nhập hoặc Email đã tồn tại
                 if (await _context.Nguoidungs.AnyAsync(u => u.TenDangNhap == model.TenDangNhap))
                 {
                     ModelState.AddModelError("TenDangNhap", "Tên đăng nhập đã tồn tại.");
@@ -102,7 +136,7 @@ namespace PhuKienCongNghe.Controllers
                     return View(model);
                 }
 
-                // Băm mật khẩu trước khi lưu
+                // Băm mật khẩu
                 var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
 
                 var user = new Nguoidung
@@ -113,23 +147,18 @@ namespace PhuKienCongNghe.Controllers
                     MatKhau = hashedPassword, // Lưu mật khẩu đã băm
                     SoDienThoai = model.SoDienThoai,
                     DiaChi = model.DiaChi,
-                    VaiTro = "user" // Mặc định là user
+                    VaiTro = "user"
                 };
 
                 _context.Nguoidungs.Add(user);
                 await _context.SaveChangesAsync();
 
-                // Tự động đăng nhập sau khi đăng ký thành công
+                // Tự động đăng nhập sau khi đăng ký
                 var loginModel = new LoginViewModel { TenDangNhap = model.TenDangNhap, MatKhau = model.MatKhau };
+                // Chuyển đến Action Login (Post)
                 return await Login(loginModel, "/");
             }
             return View(model);
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
         }
     }
 }
