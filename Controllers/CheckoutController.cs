@@ -14,7 +14,7 @@ namespace PhuKienCongNghe.Controllers
     public class CheckoutController : Controller
     {
         private readonly PhukiencongngheDbContext _context;
-
+        public const string CHECKOUT_STATE_KEY = "CheckoutState";
         public CheckoutController(PhukiencongngheDbContext context)
         {
             _context = context;
@@ -25,96 +25,189 @@ namespace PhuKienCongNghe.Controllers
         {
             return HttpContext.Session.Get<List<CartItemViewModel>>(CartController.CARTKEY) ?? new List<CartItemViewModel>();
         }
-
-        // GET: /Checkout/Index
-        [HttpGet]
-        public IActionResult Index()
+        // HÀM NỘI BỘ: Lấy/Tạo trạng thái thanh toán
+        private CheckoutViewModel GetCheckoutState()
         {
-            // === KIỂM TRA ĐĂNG NHẬP ===
+            return HttpContext.Session.Get<CheckoutViewModel>(CHECKOUT_STATE_KEY) ?? new CheckoutViewModel();
+        }
+
+        // HÀM NỘI BỘ: Lưu trạng thái thanh toán
+        private void SaveCheckoutState(CheckoutViewModel state)
+        {
+            HttpContext.Session.Set(CHECKOUT_STATE_KEY, state);
+        }
+
+        // --- BƯỚC 1: NHẬP ĐỊA CHỈ ---
+
+        // GET: /Checkout/Address
+        [HttpGet]
+        public IActionResult Address()
+        {
+            // Kiểm tra đăng nhập
             if (!User.Identity.IsAuthenticated)
             {
-                // Nếu chưa đăng nhập, bắt chuyển đến trang đăng nhập
-                // và truyền URL trang này để quay lại sau khi đăng nhập thành công
-                return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Index" });
+                return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
             }
-
-            var cart = GetCart();
-            if (cart.Count == 0)
+            // Kiểm tra giỏ hàng
+            if (GetCart().Count == 0)
             {
-                // Giỏ hàng rỗng, không cho thanh toán
                 return RedirectToAction("Index", "Cart");
             }
 
-            var viewModel = new CheckoutViewModel
-            {
-                CartItems = cart,
-                TongTien = cart.Sum(item => item.ThanhTien)
-            };
+            // Lấy trạng thái (nếu có) hoặc tạo mới
+            var model = GetCheckoutState();
 
-            // Tự động điền thông tin người dùng nếu họ đã đăng nhập
+            // Lấy thông tin người dùng đã đăng nhập và điền sẵn
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _context.Nguoidungs.Find(int.Parse(userId)); // Tìm người dùng
+            var user = _context.Nguoidungs.Find(int.Parse(userId));
             if (user != null)
             {
-                viewModel.HoTenNguoiNhan = user.HoTen;
-                viewModel.SoDienThoai = user.SoDienThoai;
-                viewModel.Email = user.Email;
-                // Bạn có thể điền địa chỉ mặc định của họ nếu có
+                model.HoTenNguoiNhan = user.HoTen;
+                model.SoDienThoai = user.SoDienThoai;
+                model.Email = user.Email;
             }
 
-            return View(viewModel);
+            return View(model); // Tạo View "Views/Checkout/Address.cshtml"
         }
 
-        // POST: /Checkout/Index
+        // POST: /Checkout/Address
+        [HttpPost]
+        public IActionResult Address(CheckoutViewModel model)
+        {
+            // Lấy trạng thái hiện tại (để không mất các thông tin khác)
+            var state = GetCheckoutState();
+
+            // Cập nhật thông tin địa chỉ từ form
+            state.HoTenNguoiNhan = model.HoTenNguoiNhan;
+            state.SoDienThoai = model.SoDienThoai;
+            state.Email = model.Email;
+            state.TinhThanh = model.TinhThanh;
+            state.QuanHuyen = model.QuanHuyen;
+            state.PhuongXa = model.PhuongXa;
+            state.DiaChiCuThe = model.DiaChiCuThe;
+            state.GhiChu = model.GhiChu;
+
+            // Lưu trạng thái vào Session
+            SaveCheckoutState(state);
+
+            // Chuyển sang Bước 2
+            return RedirectToAction("Payment");
+        }
+
+        // --- BƯỚC 2: CHỌN GIAO HÀNG & THANH TOÁN ---
+
+        // GET: /Checkout/Payment
+        [HttpGet]
+        public IActionResult Payment()
+        {
+            // Kiểm tra đăng nhập và giỏ hàng
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
+            }
+            if (GetCart().Count == 0)
+            {
+                return RedirectToAction("Index", "Cart");
+            }
+
+            var model = GetCheckoutState();
+            // Kiểm tra xem đã qua Bước 1 chưa (bằng cách check 1 trường bắt buộc)
+            if (string.IsNullOrEmpty(model.TinhThanh))
+            {
+                return RedirectToAction("Address");
+            }
+
+            // Cập nhật giỏ hàng và tổng tiền vào model (để hiển thị)
+            var cart = GetCart();
+            model.CartItems = cart;
+            model.TongTien = cart.Sum(item => item.ThanhTien);
+
+            // TODO: Tính phí ship dựa trên model.TinhThanh
+            // (Bạn có thể thêm logic tính phí ship ở đây)
+
+            return View(model); // Tạo View "Views/Checkout/Payment.cshtml"
+        }
+
+        // POST: /Checkout/Payment
+        [HttpPost]
+        public IActionResult Payment(CheckoutViewModel model)
+        {
+            // Lấy trạng thái từ Session (không tin vào model post lên)
+            var state = GetCheckoutState();
+
+            // Chỉ cập nhật phương thức thanh toán
+            state.PaymentMethod = model.PaymentMethod;
+
+            // Lưu lại Session
+            SaveCheckoutState(state);
+
+            // Chuyển sang Bước 3
+            return RedirectToAction("Confirm");
+        }
+
+        // --- BƯỚC 3: XÁC NHẬN ĐƠN HÀNG ---
+
+        // GET: /Checkout/Confirm
+        [HttpGet]
+        public IActionResult Confirm()
+        {
+            // Kiểm tra đăng nhập và giỏ hàng
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
+            }
+            if (GetCart().Count == 0)
+            {
+                return RedirectToAction("Index", "Cart");
+            }
+
+            var model = GetCheckoutState();
+            // Kiểm tra xem đã qua Bước 2 chưa
+            if (string.IsNullOrEmpty(model.PaymentMethod))
+            {
+                return RedirectToAction("Payment");
+            }
+
+            // Lấy giỏ hàng và tổng tiền để hiển thị lần cuối
+            var cart = GetCart();
+            model.CartItems = cart;
+            model.TongTien = cart.Sum(item => item.ThanhTien);
+            // TODO: Thêm phí ship vào TongTien ở đây
+
+            return View(model); // Tạo View "Views/Checkout/Confirm.cshtml"
+        }
+
+        // POST: /Checkout/Confirm
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(CheckoutViewModel model)
+        public async Task<IActionResult> ConfirmOrder() // Đổi tên để tránh trùng lặp
         {
-            // === KIỂM TRA LẠI ĐĂNG NHẬP ===
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account");
             }
 
             var cart = GetCart();
-            if (cart.Count == 0)
+            var model = GetCheckoutState();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // Kiểm tra lần cuối
+            if (cart.Count == 0 || string.IsNullOrEmpty(model.PaymentMethod) || string.IsNullOrEmpty(model.TinhThanh))
             {
-                return RedirectToAction("Index", "Cart");
+                return RedirectToAction("Address");
             }
 
-            // Gán lại giỏ hàng và tổng tiền vào model (vì nó không được POST về)
-            model.CartItems = cart;
-            model.TongTien = cart.Sum(item => item.ThanhTien);
-
-            if (!ModelState.IsValid)
-            {
-                // Nếu dữ liệu form không hợp lệ, trả về View và hiển thị lỗi
-                return View(model);
-            }
-
-            // Lấy MaNguoiDung từ user đã đăng nhập
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdString, out int userId))
-            {
-                // Lỗi không tìm thấy ID người dùng (dù đã đăng nhập)
-                ModelState.AddModelError(string.Empty, "Lỗi xác thực người dùng.");
-                return View(model);
-            }
-
-            // Bắt đầu xử lý đơn hàng
+            // Gọi hàm xử lý COD (hoặc thanh toán online)
             if (model.PaymentMethod == "COD")
             {
-                // Xử lý Thanh toán khi nhận hàng (COD)
+                // Gọi hàm ProcessCOD với model từ Session
                 return await ProcessCOD(model, userId, cart);
             }
-            else if (model.PaymentMethod == "Online")
+            else
             {
-                // Xử lý Thanh toán trực tuyến (VNPAY, MoMo...)
-                // Tạm thời chuyển hướng sang một action xử lý riêng
-                return RedirectToAction("ProcessOnlinePayment", new { amount = model.TongTien });
+                // Xử lý thanh toán online
+                return RedirectToAction("ProcessOnlinePayment");
             }
-
-            return View(model);
         }
 
         private async Task<IActionResult> ProcessCOD(CheckoutViewModel model, int userId, List<CartItemViewModel> cart)
@@ -186,6 +279,11 @@ namespace PhuKienCongNghe.Controllers
             }
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToAction("Address");
+        }
+
         // GET: /Checkout/ProcessOnlinePayment
         public IActionResult ProcessOnlinePayment(double amount)
         {
@@ -204,7 +302,7 @@ namespace PhuKienCongNghe.Controllers
         // GET: /Checkout/OrderSuccess
         public IActionResult OrderSuccess()
         {
-            return View("OderSuccess"); // Tạo View này
+            return View("OrderSuccess"); // Tạo View này
         }
     }
 }

@@ -1,0 +1,80 @@
+﻿@model PhuKienCongNghe.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Xác nhận đơn hàng";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h3>3/3: Xác nhận đơn hàng</h3>
+            <hr />
+            <p>Vui lòng kiểm tra lại toàn bộ thông tin trước khi đặt hàng.</p>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    Thông tin người nhận
+                    <a asp-action="Address" class="float-right">Chỉnh sửa</a>
+                </div>
+                <div class="card-body">
+                    <strong>Họ tên:</strong> @Model.HoTenNguoiNhan<br />
+                    <strong>Điện thoại:</strong> @Model.SoDienThoai<br />
+                    <strong>Email:</strong> @Model.Email<br />
+                    <strong>Địa chỉ:</strong> @Model.DiaChiCuThe, @Model.PhuongXa, @Model.QuanHuyen, @Model.TinhThanh
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    Phương thức thanh toán
+                    <a asp-action="Payment" class="float-right">Chỉnh sửa</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.PaymentMethod == "COD")
+                    {
+                        <strong>Thanh toán khi nhận hàng (COD)</strong>
+                    }
+                    else
+                    {
+                        <strong>Thanh toán trực tuyến</strong>
+                    }
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    Chi tiết đơn hàng
+                    <a asp-action="Index" asp-controller="Cart" class="float-right">Thay đổi</a>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    @item.TenSanPham (x @item.SoLuong)
+                                </div>
+                                <span>@item.ThanhTien.ToString("N0") đ</span>
+                            </li>
+                        }
+                    </ul>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <h5>Tổng cộng</h5>
+                        <h5 class="text-danger">@Model.TongTien.ToString("N0") đ</h5>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="ConfirmOrder" method="post">
+                @Html.AntiForgeryToken()
+
+                <hr />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Payment" class="btn btn-outline-secondary">Quay lại</a>
+                    <button type"submit" class="btn btn-success btn-lg">XÁC NHẬN ĐẶT HÀNG</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
