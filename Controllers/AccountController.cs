@@ -36,8 +36,8 @@ namespace PhuKienCongNghe.Controllers
                 {
                     // Lỗi bảo mật nghiêm trọng trong CSDL của bạn!
                     // Chúng ta phải kiểm tra mật khẩu đã băm
+                    user.MatKhau = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
                     // Mã kiểm tra mật khẩu plaintext (KHÔNG NÊN DÙNG): if (user.MatKhau == model.MatKhau)
-
                     // Mã kiểm tra mật khẩu đã băm (ĐÚNG)
                     if (BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
                     {
