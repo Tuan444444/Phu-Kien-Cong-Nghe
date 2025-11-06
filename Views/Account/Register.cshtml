@@ -1,0 +1,92 @@
+﻿@model PhuKienCongNghe.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(135deg, #fffaf6, #fff4ee);">
+    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 16px;">
+        <div class="text-center mb-3">
+            <h4 class="fw-bold text-orange">
+                <i class="bi bi-person-plus-fill"></i> Đăng ký tài khoản
+            </h4>
+        </div>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-2"></div>
+
+            <div class="mb-3">
+                <label asp-for="HoTen" class="form-label fw-semibold"></label>
+                <input asp-for="HoTen" class="form-control" placeholder="Họ và tên" />
+                <span asp-validation-for="HoTen" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TenDangNhap" class="form-label fw-semibold"></label>
+                <input asp-for="TenDangNhap" class="form-control" placeholder="Tên đăng nhập" />
+                <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MatKhau" class="form-label fw-semibold"></label>
+                <input asp-for="MatKhau" type="password" class="form-control" placeholder="Mật khẩu" />
+                <span asp-validation-for="MatKhau" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="XacNhanMatKhau" class="form-label fw-semibold"></label>
+                <input asp-for="XacNhanMatKhau" type="password" class="form-control" placeholder="Nhập lại mật khẩu" />
+                <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SoDienThoai" class="form-label fw-semibold"></label>
+                <input asp-for="SoDienThoai" class="form-control" placeholder="Số điện thoại" />
+                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DiaChi" class="form-label fw-semibold"></label>
+                <input asp-for="DiaChi" class="form-control" placeholder="Địa chỉ" />
+                <span asp-validation-for="DiaChi" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn w-100 text-white fw-semibold" style="background-color: #ff6600;">Đăng ký</button>
+
+            <div class="text-center mt-3">
+                <span>Đã có tài khoản? </span>
+                <a asp-action="Login" class="text-decoration-none" style="color:#ff6600;">Đăng nhập</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .text-orange {
+        color: #ff6600;
+    }
+
+    input.form-control {
+        background-color: #eef3ff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .btn:hover {
+        background-color: #e65c00 !important;
+    }
+
+    .card {
+        background: #fffdfb;
+    }
+</style>

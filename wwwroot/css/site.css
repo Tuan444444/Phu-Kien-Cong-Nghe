@@ -1,4 +1,4 @@
-html {
+Ôªøhtml {
   font-size: 14px;
 }
 
@@ -43,28 +43,28 @@ body {
 
 .footer-clean {
     padding: 3rem 0; /* T?ng kho?ng ??m */
-    background-color: #f8f9fa; /* M‡u n?n x·m r?t nh?t (thay vÏ ?en) */
-    color: #555; /* M‡u ch? x·m ??m */
-    border-top: 1px solid #e0e0e0; /* M?t ???ng k? m?ng ? trÍn */
+    background-color: #f8f9fa; /* M√†u n?n x√°m r?t nh?t (thay v√¨ ?en) */
+    color: #555; /* M√†u ch? x√°m ??m */
+    border-top: 1px solid #e0e0e0; /* M?t ???ng k? m?ng ? tr√™n */
 }
 
-    /* C?n gi?a c·c icon m?ng x„ h?i */
+    /* C?n gi?a c√°c icon m?ng x√£ h?i */
     .footer-clean .footer-social-icons {
         margin-bottom: 1.5rem;
     }
 
-    /* N˙t icon (l‡m l?i cho ki?u m?i) */
+    /* N√∫t icon (l√†m l?i cho ki?u m?i) */
     .footer-clean .social-icon-clean {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 40px;
         height: 40px;
-        border: 1px solid #ccc; /* Vi?n x·m nh?t */
-        border-radius: 50%; /* TrÚn */
+        border: 1px solid #ccc; /* Vi?n x√°m nh?t */
+        border-radius: 50%; /* Tr√≤n */
         margin: 0 10px;
         font-size: 1.2rem;
-        color: #555; /* M‡u icon x·m */
+        color: #555; /* M√†u icon x√°m */
         text-decoration: none;
         transition: all 0.3s ease;
     }
@@ -72,18 +72,18 @@ body {
         /* Hi?u ?ng khi hover icon */
         .footer-clean .social-icon-clean:hover {
             color: #fff; /* Ch? tr?ng */
-            background-color: var(--brand-primary); /* N?n m‡u cam (t? CSS c?) */
-            border-color: var(--brand-primary); /* Vi?n m‡u cam */
+            background-color: var(--brand-primary); /* N?n m√†u cam (t? CSS c?) */
+            border-color: var(--brand-primary); /* Vi?n m√†u cam */
         }
 
-    /* C·c link ?i?u h??ng (n?m ngang) */
+    /* C√°c link ?i?u h??ng (n?m ngang) */
     .footer-clean .footer-nav-links {
         list-style: none; /* B? d?u ch?m */
         padding: 0;
         margin-bottom: 1.5rem;
-        display: flex; /* D‡n h‡ng ngang */
+        display: flex; /* D√†n h√†ng ngang */
         justify-content: center; /* C?n gi?a */
-        flex-wrap: wrap; /* T? xu?ng h‡ng trÍn mobile */
+        flex-wrap: wrap; /* T? xu?ng h√†ng tr√™n mobile */
     }
 
         .footer-clean .footer-nav-links li {
@@ -99,10 +99,10 @@ body {
         }
 
             .footer-clean .footer-nav-links a:hover {
-                color: var(--brand-primary); /* Chuy?n m‡u cam khi hover */
+                color: var(--brand-primary); /* Chuy?n m√†u cam khi hover */
             }
 
-    /* DÚng copyright */
+    /* D√≤ng copyright */
     .footer-clean .footer-copyright {
         margin-top: 1rem;
         margin-bottom: 0;
@@ -113,13 +113,13 @@ body {
 
 /* --- CSS CHO HEADER & MENU M?I --- */
 
-/* ??nh ngh?a m‡u s?c th??ng hi?u (m‡u cam) */
+/* ??nh ngh?a m√†u s?c th??ng hi?u (m√†u cam) */
 :root {
-    --brand-primary: #f57224; /* M‡u cam ??m (t? ?nh) */
-    --brand-light: #fff0e6; /* M‡u n?n cam nh?t c?a thanh danh m?c */
+    --brand-primary: #f57224; /* M√†u cam ??m (t? ?nh) */
+    --brand-light: #fff0e6; /* M√†u n?n cam nh?t c?a thanh danh m?c */
 }
 
-/* N˙t m‡u cam (TÏm ki?m, ??ng nh?p) */
+/* N√∫t m√†u cam (T√¨m ki?m, ??ng nh?p) */
 .btn-brand {
     background-color: var(--brand-primary);
     color: #fff;
@@ -128,17 +128,17 @@ body {
 }
 
     .btn-brand:hover {
-        background-color: #d85f1c; /* M‡u cam ??m h?n khi hover */
+        background-color: #d85f1c; /* M√†u cam ??m h?n khi hover */
         color: #fff;
     }
 
-/* --- TŸY CH?NH HEADER (THANH TR N CŸNG) --- */
+/* --- T√ôY CH?NH HEADER (THANH TR√äN C√ôNG) --- */
 
-/* C?n ch?nh thanh tÏm ki?m ra gi?a */
+/* C?n ch?nh thanh t√¨m ki?m ra gi?a */
 .header-search {
     width: 50%;
 }
-    /* Bo gÛc cho thanh tÏm ki?m */
+    /* Bo g√≥c cho thanh t√¨m ki?m */
     .header-search .form-control {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
@@ -149,29 +149,29 @@ body {
         border-bottom-left-radius: 0;
     }
 
-/* C?n ch?nh c·c n˙t h‡nh ??ng (Gi? h‡ng, Login) */
+/* C?n ch?nh c√°c n√∫t h√†nh ??ng (Gi? h√†ng, Login) */
 .header-actions {
     min-width: 180px;
     justify-content: flex-end;
 }
 
     .header-actions .nav-link i {
-        font-size: 1.5rem; /* Icon gi? h‡ng to h?n */
+        font-size: 1.5rem; /* Icon gi? h√†ng to h?n */
     }
 
     .header-actions .btn {
-        padding: 0.25rem 0.75rem; /* N˙t ??ng nh?p/k˝ nh? h?n */
+        padding: 0.25rem 0.75rem; /* N√∫t ??ng nh?p/k√Ω nh? h?n */
         font-size: 0.9rem;
     }
 
 
-/* --- THANH MENU DANH M?C (THANH M¿U CAM) --- */
+/* --- THANH MENU DANH M?C (THANH M√ÄU CAM) --- */
 .category-nav {
-    background-color: var(--brand-light) !important; /* D˘ng m‡u cam nh?t */
+    background-color: var(--brand-light) !important; /* D√πng m√†u cam nh?t */
     border-bottom: 1px solid #e0e0e0;
 }
 
-    /* C·c link danh m?c */
+    /* C√°c link danh m?c */
     .category-nav .nav-link {
         color: #333;
         font-weight: 500;
@@ -179,29 +179,29 @@ body {
         transition: all 0.2s ease;
     }
 
-        /* Khi hover v‡o link */
+        /* Khi hover v√†o link */
         .category-nav .nav-link:hover {
             background-color: var(--brand-primary); /* N?n cam ??m */
             color: #fff; /* Ch? tr?ng */
-            border-radius: 4px; /* Bo gÛc nh? */
+            border-radius: 4px; /* Bo g√≥c nh? */
         }
 
-    /* C?n ch?nh cho c·c m?c menu d‡n ??u */
+    /* C?n ch?nh cho c√°c m?c menu d√†n ??u */
     .category-nav .navbar-nav {
         width: 100%;
-        justify-content: space-around; /* D‡n ??u c·c m?c */
+        justify-content: space-around; /* D√†n ??u c√°c m?c */
     }
 
 
 /* --- CSS CHO HEADER & MENU M?I --- */
 
-/* ??nh ngh?a m‡u s?c th??ng hi?u (m‡u cam) */
+/* ??nh ngh?a m√†u s?c th??ng hi?u (m√†u cam) */
 :root {
-    --brand-primary: #f57224; /* M‡u cam ??m (t? ?nh) */
-    --brand-light: #fff0e6; /* M‡u n?n cam nh?t c?a thanh danh m?c */
+    --brand-primary: #f57224; /* M√†u cam ??m (t? ?nh) */
+    --brand-light: #fff0e6; /* M√†u n?n cam nh?t c?a thanh danh m?c */
 }
 
-/* N˙t m‡u cam (TÏm ki?m, ??ng nh?p) */
+/* N√∫t m√†u cam (T√¨m ki?m, ??ng nh?p) */
 .btn-brand {
     background-color: var(--brand-primary);
     color: #fff;
@@ -210,19 +210,19 @@ body {
 }
 
     .btn-brand:hover {
-        background-color: #d85f1c; /* M‡u cam ??m h?n khi hover */
+        background-color: #d85f1c; /* M√†u cam ??m h?n khi hover */
         color: #fff;
     }
 
-/* --- CSS CHO HEADER & MENU (?√ C?N CH?NH) --- */
+/* --- CSS CHO HEADER & MENU (?√É C?N CH?NH) --- */
 
-/* ??nh ngh?a m‡u s?c th??ng hi?u */
+/* ??nh ngh?a m√†u s?c th??ng hi?u */
 :root {
     --brand-primary: #f57224;
     --brand-light: #fff0e6;
 }
 
-/* N˙t m‡u cam */
+/* N√∫t m√†u cam */
 .btn-brand {
     background-color: var(--brand-primary);
     color: #fff;
@@ -235,16 +235,16 @@ body {
         color: #fff;
     }
 
-/* --- TŸY CH?NH KHO?NG C¡CH THANH HEADER --- */
+/* --- T√ôY CH?NH KHO?NG C√ÅCH THANH HEADER --- */
 
-/* * 1. C?n gi?a Thanh TÏm Ki?m:
- * ??t chi?u r?ng v‡ d˘ng mx-auto (margin auto) ?? t? ??ng c?n gi?a.
+/* * 1. C?n gi?a Thanh T√¨m Ki?m:
+ * ??t chi?u r?ng v√† d√πng mx-auto (margin auto) ?? t? ??ng c?n gi?a.
  */
 .header-search {
     width: 50%; /* Chi?m 50% ?? r?ng header */
-    min-width: 300px; /* KhÙng b? co l?i qu· nh? */
+    min-width: 300px; /* Kh√¥ng b? co l?i qu√° nh? */
 }
-    /* Bo gÛc cho thanh tÏm ki?m */
+    /* Bo g√≥c cho thanh t√¨m ki?m */
     .header-search .form-control {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
@@ -255,21 +255,21 @@ body {
         border-bottom-left-radius: 0;
     }
 
-/* * 2. C?n ph?i cho Gi? h‡ng & N˙t b?m:
- * ??t chi?u r?ng t?i thi?u ?? nÛ luÙn n?m bÍn ph?i.
+/* * 2. C?n ph?i cho Gi? h√†ng & N√∫t b?m:
+ * ??t chi?u r?ng t?i thi?u ?? n√≥ lu√¥n n?m b√™n ph?i.
  */
 .header-actions {
-    min-width: 200px; /* ??m b?o ?? ch? cho c·c n˙t */
+    min-width: 200px; /* ??m b?o ?? ch? cho c√°c n√∫t */
     justify-content: flex-end; /* ??y n?i dung sang ph?i */
 }
-    /* N˙t ??ng nh?p/k˝ nh? h?n */
+    /* N√∫t ??ng nh?p/k√Ω nh? h?n */
     .header-actions .btn-sm {
         padding: 0.25rem 0.75rem;
         font-size: 0.9rem;
     }
 
 
-/* --- THANH MENU DANH M?C (THANH M¿U CAM) --- */
+/* --- THANH MENU DANH M?C (THANH M√ÄU CAM) --- */
 .category-nav {
     background-color: var(--brand-light) !important;
     border-bottom: 1px solid #e0e0e0;
@@ -288,35 +288,35 @@ body {
             border-radius: 4px;
         }
 
-    /* * 3. C?n ??u kho?ng c·ch Menu (Quan tr?ng nh?t):
- * D˘ng Flexbox 'justify-content' ?? t? ??ng d‡n ??u c·c m?c menu.
+    /* * 3. C?n ??u kho?ng c√°ch Menu (Quan tr?ng nh?t):
+ * D√πng Flexbox 'justify-content' ?? t? ??ng d√†n ??u c√°c m?c menu.
  */
     .category-nav .navbar-nav {
         width: 100%;
-        /* D‡n ??u c·c m?c menu ra, kho?ng c·ch b?ng nhau */
+        /* D√†n ??u c√°c m?c menu ra, kho?ng c√°ch b?ng nhau */
         justify-content: space-around;
     }
-/* --- CSS CHO S? L??NG GI? H¿NG (BADGE) --- */
+/* --- CSS CHO S? L??NG GI? H√ÄNG (BADGE) --- */
 
 .cart-badge {
-    /* C?n ch?nh v? trÌ */
+    /* C?n ch?nh v? tr√≠ */
     top: 6px; /* H?i ??y xu?ng */
-    right: 0px; /* H?i ??y qua ph?i (so v?i mÈp icon) */
-    /* KÌch th??c */
+    right: 0px; /* H?i ??y qua ph?i (so v?i m√©p icon) */
+    /* K√≠ch th??c */
     font-size: 0.7em; /* Ch? nh? h?n */
     padding: 3px 6px; /* Bo vi?n nh? */
-    /* ??m b?o nÛ khÙng b? bi?n d?ng */
+    /* ??m b?o n√≥ kh√¥ng b? bi?n d?ng */
     line-height: 1;
 }
 
-/* * ThÍm kho?ng ??m cho link gi? h‡ng (me-3)
- * nh?ng n?u c?n, b?n cÛ th? Èp b?ng CSS:
+/* * Th√™m kho?ng ??m cho link gi? h√†ng (me-3)
+ * nh?ng n?u c?n, b?n c√≥ th? √©p b?ng CSS:
 */
 .header-actions .nav-link {
     padding-right: 15px !important;
 }
 
-/* ====== PH¬N TRANG ??P CHO PAGEDLIST ====== */
+/* ====== PH√ÇN TRANG ??P CHO PAGEDLIST ====== */
 .pagination {
     display: flex;
     justify-content: center;
@@ -359,7 +359,7 @@ body {
             cursor: default;
         }
 
-        /* N˙t < v‡ > */
+        /* N√∫t < v√† > */
         .pagination li:first-child a,
         .pagination li:last-child a {
             font-weight: bold;
@@ -374,22 +374,78 @@ body {
     }
 }
 
-/* Css cho n˙t xem thÍm*/
+/* Css cho n√∫t xem th√™m*/
 .link-brand {
-    color: var(--brand-primary); /* D˘ng m‡u cam */
+    color: var(--brand-primary); /* D√πng m√†u cam */
     font-weight: 500;
-    text-decoration: none; /* B? g?ch ch‚n */
+    text-decoration: none; /* B? g?ch ch√¢n */
     transition: color 0.2s ease;
 }
 
     .link-brand:hover {
-        color: #d85f1c; /* M‡u cam ??m h?n khi hover */
-        text-decoration: underline; /* ThÍm g?ch ch‚n khi hover */
+        color: #d85f1c; /* M√†u cam ??m h?n khi hover */
+        text-decoration: underline; /* Th√™m g?ch ch√¢n khi hover */
     }
 
-    /* C?n ch?nh icon m?i tÍn (>) cho ??p */
+    /* C?n ch?nh icon m?i t√™n (>) cho ??p */
     .link-brand i {
-        font-size: 0.9em; /* Cho icon nh? h?n text m?t ch˙t */
+        font-size: 0.9em; /* Cho icon nh? h?n text m?t ch√∫t */
         vertical-align: middle; /* C?n icon ra gi?a ch? */
         margin-left: 2px;
+    }
+/* ====== N√∫t t√†i kho·∫£n & Tone m√†u cam ====== */
+.btn-login, .btn-outline-primary {
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-weight: 500;
+}
+
+.btn-login {
+    background-color: #ff6600;
+    border: none;
+    color: #fff;
+}
+
+    .btn-login:hover {
+        background-color: #e35500;
+        color: #fff; /* ƒê·∫£m b·∫£o m√†u ch·ªØ v·∫´n tr·∫Øng khi hover */
+    }
+
+.btn-outline-primary {
+    border: 1px solid #ff6600;
+    color: #ff6600;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #ff6600;
+        color: #fff;
+    }
+
+/* ====== CSS cho Dropdown ====== */
+.custom-dropdown {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 5px 0;
+}
+
+    .custom-dropdown .dropdown-item {
+        padding: 10px 18px;
+        color: #333;
+        font-weight: 500;
+        transition: all 0.25s ease;
+        border-radius: 6px; /* Th√™m border-radius cho ƒë·∫πp */
+        margin: 0 5px; /* Th√™m margin 2 b√™n */
+        width: auto; /* S·ª≠a l·∫°i ƒë·ªÉ n√≥ v·ª´a v·∫∑n */
+    }
+
+        .custom-dropdown .dropdown-item:hover {
+            background-color: #ff6600;
+            color: #fff !important;
+            transform: translateX(4px);
+        }
+
+    .custom-dropdown hr.dropdown-divider {
+        margin: 6px 0;
+        border-top: 1px solid #ddd;
     }
