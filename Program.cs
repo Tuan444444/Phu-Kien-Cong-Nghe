@@ -1,38 +1,41 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PhuKienCongNghe.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Lấy chuỗi kết nối
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. ??ng k� DbContext
+// 2. Đăng ký DbContext
 builder.Services.AddDbContext<PhukiencongngheDbContext>(options =>
-    options.UseSqlServer(connectionString)); // <-- THAY ??I ? ?�Y
-// 3. ??ng k� d?ch v? cho Controllers v� Views
+    options.UseSqlServer(connectionString));
+
+// 3. Đăng ký dịch vụ cho Controller và View
 builder.Services.AddControllersWithViews();
 
-// 4. ??ng k� d?ch v? Session
-builder.Services.AddDistributedMemoryCache(); // C?n thi?t cho session
+// 4. Đăng ký dịch vụ Session (Cho Giỏ Hàng)
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Th?i gian session t?n t?i
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
-// 5. ??ng k� d?ch v? HttpContextAccessor (?? l?y session trong service)
+// 5. Đăng ký dịch vụ HttpContextAccessor (Để View đọc Session của giỏ hàng)
 builder.Services.AddHttpContextAccessor();
 
-// 6. C?u h�nh X�c th?c b?ng Cookie
+// 6. ĐĂNG KÝ DỊCH VỤ XÁC THỰC (Cho Đăng Nhập bằng Cookie)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; // ???ng d?n ??n trang ??ng nh?p
+        options.LoginPath = "/Account/Login"; // Đường dẫn đến trang đăng nhập
         options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Home/AccessDenied"; // Trang t? ch?i truy c?p
+        options.AccessDeniedPath = "/Home/AccessDenied";
     });
 
+// === XÂY DỰNG ỨNG DỤNG ===
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,15 +48,19 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseRouting();
+app.UseRouting(); // <-- SỐ 1: BỘ ĐỊNH TUYẾN
 
-app.UseSession(); // K�ch ho?t Session
+// === KHỐI QUAN TRỌNG: PHẢI ĐÚNG THỨ TỰ ===
 
-app.UseAuthentication(); // K�ch ho?t X�c th?c
-app.UseAuthorization(); // K�ch ho?t Ph�n quy?n
+app.UseSession(); // <-- SỐ 2: Kích hoạt Session (cho giỏ hàng)
 
-app.MapControllerRoute(
+app.UseAuthentication(); // <-- SỐ 3: Kích hoạt Xác thực (để đọc Cookie)
+app.UseAuthorization();  // <-- SỐ 4: Kích hoạt Phân quyền
+
+// =======================================
+
+app.MapControllerRoute( // <-- SỐ 5: PHẢI NẰM CUỐI CÙNG
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Product}/{action=Index}/{id?}");
 
 app.Run();

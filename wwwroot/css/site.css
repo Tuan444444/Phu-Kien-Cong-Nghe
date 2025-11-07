@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -20,3 +20,432 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+:root {
+    --brand-primary: #f57224;
+}
+
+.btn-brand {
+    background-color: var(--brand-primary);
+    color: #fff;
+    border: none;
+}
+
+    .btn-brand:hover {
+        background-color: #d85f1c;
+        color: #fff;
+    }
+
+
+
+
+/* --- CSS CHO FOOTER M?I (CLEAN & MINIMAL) --- */
+
+.footer-clean {
+    padding: 3rem 0; /* T?ng kho?ng ??m */
+    background-color: #f8f9fa; /* Màu n?n xám r?t nh?t (thay vì ?en) */
+    color: #555; /* Màu ch? xám ??m */
+    border-top: 1px solid #e0e0e0; /* M?t ???ng k? m?ng ? trên */
+}
+
+    /* C?n gi?a các icon m?ng xã h?i */
+    .footer-clean .footer-social-icons {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Nút icon (làm l?i cho ki?u m?i) */
+    .footer-clean .social-icon-clean {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ccc; /* Vi?n xám nh?t */
+        border-radius: 50%; /* Tròn */
+        margin: 0 10px;
+        font-size: 1.2rem;
+        color: #555; /* Màu icon xám */
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        /* Hi?u ?ng khi hover icon */
+        .footer-clean .social-icon-clean:hover {
+            color: #fff; /* Ch? tr?ng */
+            background-color: var(--brand-primary); /* N?n màu cam (t? CSS c?) */
+            border-color: var(--brand-primary); /* Vi?n màu cam */
+        }
+
+    /* Các link ?i?u h??ng (n?m ngang) */
+    .footer-clean .footer-nav-links {
+        list-style: none; /* B? d?u ch?m */
+        padding: 0;
+        margin-bottom: 1.5rem;
+        display: flex; /* Dàn hàng ngang */
+        justify-content: center; /* C?n gi?a */
+        flex-wrap: wrap; /* T? xu?ng hàng trên mobile */
+    }
+
+        .footer-clean .footer-nav-links li {
+            padding: 0 1rem;
+            margin-bottom: 0.5rem; /* Cho mobile */
+        }
+
+        .footer-clean .footer-nav-links a {
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+            .footer-clean .footer-nav-links a:hover {
+                color: var(--brand-primary); /* Chuy?n màu cam khi hover */
+            }
+
+    /* Dòng copyright */
+    .footer-clean .footer-copyright {
+        margin-top: 1rem;
+        margin-bottom: 0;
+        font-size: 0.9rem;
+        color: #777;
+    }
+
+
+/* --- CSS CHO HEADER & MENU M?I --- */
+
+/* ??nh ngh?a màu s?c th??ng hi?u (màu cam) */
+:root {
+    --brand-primary: #f57224; /* Màu cam ??m (t? ?nh) */
+    --brand-light: #fff0e6; /* Màu n?n cam nh?t c?a thanh danh m?c */
+}
+
+/* Nút màu cam (Tìm ki?m, ??ng nh?p) */
+.btn-brand {
+    background-color: var(--brand-primary);
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-brand:hover {
+        background-color: #d85f1c; /* Màu cam ??m h?n khi hover */
+        color: #fff;
+    }
+
+/* --- TÙY CH?NH HEADER (THANH TRÊN CÙNG) --- */
+
+/* C?n ch?nh thanh tìm ki?m ra gi?a */
+.header-search {
+    width: 50%;
+}
+    /* Bo góc cho thanh tìm ki?m */
+    .header-search .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .header-search .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+/* C?n ch?nh các nút hành ??ng (Gi? hàng, Login) */
+.header-actions {
+    min-width: 180px;
+    justify-content: flex-end;
+}
+
+    .header-actions .nav-link i {
+        font-size: 1.5rem; /* Icon gi? hàng to h?n */
+    }
+
+    .header-actions .btn {
+        padding: 0.25rem 0.75rem; /* Nút ??ng nh?p/ký nh? h?n */
+        font-size: 0.9rem;
+    }
+
+
+/* --- THANH MENU DANH M?C (THANH MÀU CAM) --- */
+.category-nav {
+    background-color: var(--brand-light) !important; /* Dùng màu cam nh?t */
+    border-bottom: 1px solid #e0e0e0;
+}
+
+    /* Các link danh m?c */
+    .category-nav .nav-link {
+        color: #333;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+        /* Khi hover vào link */
+        .category-nav .nav-link:hover {
+            background-color: var(--brand-primary); /* N?n cam ??m */
+            color: #fff; /* Ch? tr?ng */
+            border-radius: 4px; /* Bo góc nh? */
+        }
+
+    /* C?n ch?nh cho các m?c menu dàn ??u */
+    .category-nav .navbar-nav {
+        width: 100%;
+        justify-content: space-around; /* Dàn ??u các m?c */
+    }
+
+
+/* --- CSS CHO HEADER & MENU M?I --- */
+
+/* ??nh ngh?a màu s?c th??ng hi?u (màu cam) */
+:root {
+    --brand-primary: #f57224; /* Màu cam ??m (t? ?nh) */
+    --brand-light: #fff0e6; /* Màu n?n cam nh?t c?a thanh danh m?c */
+}
+
+/* Nút màu cam (Tìm ki?m, ??ng nh?p) */
+.btn-brand {
+    background-color: var(--brand-primary);
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-brand:hover {
+        background-color: #d85f1c; /* Màu cam ??m h?n khi hover */
+        color: #fff;
+    }
+
+/* --- CSS CHO HEADER & MENU (?Ã C?N CH?NH) --- */
+
+/* ??nh ngh?a màu s?c th??ng hi?u */
+:root {
+    --brand-primary: #f57224;
+    --brand-light: #fff0e6;
+}
+
+/* Nút màu cam */
+.btn-brand {
+    background-color: var(--brand-primary);
+    color: #fff;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-brand:hover {
+        background-color: #d85f1c;
+        color: #fff;
+    }
+
+/* --- TÙY CH?NH KHO?NG CÁCH THANH HEADER --- */
+
+/* * 1. C?n gi?a Thanh Tìm Ki?m:
+ * ??t chi?u r?ng và dùng mx-auto (margin auto) ?? t? ??ng c?n gi?a.
+ */
+.header-search {
+    width: 50%; /* Chi?m 50% ?? r?ng header */
+    min-width: 300px; /* Không b? co l?i quá nh? */
+}
+    /* Bo góc cho thanh tìm ki?m */
+    .header-search .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .header-search .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+/* * 2. C?n ph?i cho Gi? hàng & Nút b?m:
+ * ??t chi?u r?ng t?i thi?u ?? nó luôn n?m bên ph?i.
+ */
+.header-actions {
+    min-width: 200px; /* ??m b?o ?? ch? cho các nút */
+    justify-content: flex-end; /* ??y n?i dung sang ph?i */
+}
+    /* Nút ??ng nh?p/ký nh? h?n */
+    .header-actions .btn-sm {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+
+/* --- THANH MENU DANH M?C (THANH MÀU CAM) --- */
+.category-nav {
+    background-color: var(--brand-light) !important;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+    .category-nav .nav-link {
+        color: #333;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+        .category-nav .nav-link:hover {
+            background-color: var(--brand-primary);
+            color: #fff;
+            border-radius: 4px;
+        }
+
+    /* * 3. C?n ??u kho?ng cách Menu (Quan tr?ng nh?t):
+ * Dùng Flexbox 'justify-content' ?? t? ??ng dàn ??u các m?c menu.
+ */
+    .category-nav .navbar-nav {
+        width: 100%;
+        /* Dàn ??u các m?c menu ra, kho?ng cách b?ng nhau */
+        justify-content: space-around;
+    }
+/* --- CSS CHO S? L??NG GI? HÀNG (BADGE) --- */
+
+.cart-badge {
+    /* C?n ch?nh v? trí */
+    top: 6px; /* H?i ??y xu?ng */
+    right: 0px; /* H?i ??y qua ph?i (so v?i mép icon) */
+    /* Kích th??c */
+    font-size: 0.7em; /* Ch? nh? h?n */
+    padding: 3px 6px; /* Bo vi?n nh? */
+    /* ??m b?o nó không b? bi?n d?ng */
+    line-height: 1;
+}
+
+/* * Thêm kho?ng ??m cho link gi? hàng (me-3)
+ * nh?ng n?u c?n, b?n có th? ép b?ng CSS:
+*/
+.header-actions .nav-link {
+    padding-right: 15px !important;
+}
+
+/* ====== PHÂN TRANG ??P CHO PAGEDLIST ====== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    gap: 6px;
+    padding-left: 0;
+    margin-top: 40px;
+    font-family: "Segoe UI", sans-serif;
+}
+
+    .pagination li {
+        display: inline-block;
+    }
+
+        .pagination li a,
+        .pagination li span {
+            display: block;
+            padding: 8px 14px;
+            font-size: 15px;
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+            .pagination li a:hover {
+                background-color: #f2f2f2;
+                border-color: #ccc;
+                color: #007bff;
+            }
+
+        .pagination li.active a,
+        .pagination li.active span {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+            cursor: default;
+        }
+
+        /* Nút < và > */
+        .pagination li:first-child a,
+        .pagination li:last-child a {
+            font-weight: bold;
+        }
+
+/* Responsive nh? */
+@media (max-width: 576px) {
+    .pagination li a,
+    .pagination li span {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+
+/* Css cho nút xem thêm*/
+.link-brand {
+    color: var(--brand-primary); /* Dùng màu cam */
+    font-weight: 500;
+    text-decoration: none; /* B? g?ch chân */
+    transition: color 0.2s ease;
+}
+
+    .link-brand:hover {
+        color: #d85f1c; /* Màu cam ??m h?n khi hover */
+        text-decoration: underline; /* Thêm g?ch chân khi hover */
+    }
+
+    /* C?n ch?nh icon m?i tên (>) cho ??p */
+    .link-brand i {
+        font-size: 0.9em; /* Cho icon nh? h?n text m?t chút */
+        vertical-align: middle; /* C?n icon ra gi?a ch? */
+        margin-left: 2px;
+    }
+/* ====== Nút tài khoản & Tone màu cam ====== */
+.btn-login, .btn-outline-primary {
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-weight: 500;
+}
+
+.btn-login {
+    background-color: #ff6600;
+    border: none;
+    color: #fff;
+}
+
+    .btn-login:hover {
+        background-color: #e35500;
+        color: #fff; /* Đảm bảo màu chữ vẫn trắng khi hover */
+    }
+
+.btn-outline-primary {
+    border: 1px solid #ff6600;
+    color: #ff6600;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #ff6600;
+        color: #fff;
+    }
+
+/* ====== CSS cho Dropdown ====== */
+.custom-dropdown {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 5px 0;
+}
+
+    .custom-dropdown .dropdown-item {
+        padding: 10px 18px;
+        color: #333;
+        font-weight: 500;
+        transition: all 0.25s ease;
+        border-radius: 6px; /* Thêm border-radius cho đẹp */
+        margin: 0 5px; /* Thêm margin 2 bên */
+        width: auto; /* Sửa lại để nó vừa vặn */
+    }
+
+        .custom-dropdown .dropdown-item:hover {
+            background-color: #ff6600;
+            color: #fff !important;
+            transform: translateX(4px);
+        }
+
+    .custom-dropdown hr.dropdown-divider {
+        margin: 6px 0;
+        border-top: 1px solid #ddd;
+    }

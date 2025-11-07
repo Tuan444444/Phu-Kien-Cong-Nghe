@@ -1,0 +1,59 @@
+﻿@model PhuKienCongNghe.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Profile" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="TenDangNhap" class="form-label fw-semibold"></label>
+                            <input asp-for="TenDangNhap" class="form-control" readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control" readonly />
+                            <small class="form-text text-muted">Email và Tên đăng nhập không thể thay đổi.</small>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="mb-3">
+                            <label asp-for="HoTen" class="form-label fw-semibold"></label>
+                            <input asp-for="HoTen" class="form-control" />
+                            <span asp-validation-for="HoTen" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SoDienThoai" class="form-label fw-semibold"></label>
+                            <input asp-for="SoDienThoai" class="form-control" placeholder="Chưa cập nhật" />
+                            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DiaChi" class="form-label fw-semibold"></label>
+                            <textarea asp-for="DiaChi" class="form-control" rows="3" placeholder="Chưa cập nhật"></textarea>
+                            <span asp-validation-for="DiaChi" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3" style="background-color: #ff6600; border:none;">
+                            Lưu thay đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

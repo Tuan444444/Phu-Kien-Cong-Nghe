@@ -1,0 +1,179 @@
+﻿@model PhuKienCongNghe.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container mt-5">
+    <form asp-action="Index" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-7">
+                <h4>Thông tin người nhận</h4>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="HoTenNguoiNhan"></label>
+                    <input asp-for="HoTenNguoiNhan" class="form-control" />
+                    <span asp-validation-for="HoTenNguoiNhan" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="SoDienThoai"></label>
+                        <input asp-for="SoDienThoai" class="form-control" />
+                        <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr />
+                <h4>Địa chỉ nhận hàng</h4>
+
+                <input type="hidden" asp-for="TinhThanh" id="province-name" />
+                <input type="hidden" asp-for="QuanHuyen" id="district-name" />
+                <input type="hidden" asp-for="PhuongXa" id="ward-name" />
+
+                <div class="form-group">
+                    <label>Tỉnh/Thành phố</label>
+                    <select class="form-control" id="province-select">
+                        <option value="">Chọn Tỉnh/Thành</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label>Quận/Huyện</label>
+                        <select class="form-control" id="district-select">
+                            <option value="">Chọn Quận/Huyện</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label>Phường/Xã</label>
+                        <select class="form-control" id="ward-select">
+                            <option value="">Chọn Phường/Xã</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DiaChiCuThe">Địa chỉ cụ thể (Số nhà, tên đường)</label>
+                    <input asp-for="DiaChiCuThe" class="form-control" />
+                    <span asp-validation-for="DiaChiCuThe" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="GhiChu"></label>
+                    <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+                </div>
+
+                <hr />
+                <h4>Phương thức thanh toán</h4>
+                <div class_="" form-group"="">
+                    <div class="form-check">
+                        <input type="radio" asp-for="PaymentMethod" value="COD" id="cod" class="form-check-input" checked />
+                        <label for="cod" class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" asp-for="PaymentMethod" value="Online" id="online" class="form-check-input" />
+                        <label for="online" class="form-check-label">Thanh toán trực tuyến (VNPAY/MoMo...)</label>
+                    </div>
+                    <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card" style="position: sticky; top: 80px;">
+                    <div class="card-body">
+                        <h4 class="card-title">Tóm tắt đơn hàng</h4>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <img src="@item.HinhAnh" alt="@item.TenSanPham" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;" />
+                                        @item.TenSanPham (x @item.SoLuong)
+                                    </div>
+                                    <span>@item.ThanhTien.ToString("N0") đ</span>
+                                </li>
+                            }
+                        </ul>
+                        <hr />
+                        <div class="d-flex justify-content-between">
+                            <h5>Tổng cộng</h5>
+                            <h5 class="text-danger">@Model.TongTien.ToString("N0") đ</h5>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-3 w-100">XÁC NHẬN ĐẶT HÀNG</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const host = "http://provinces.open-api.vn/api/";
+
+            // Tải Tỉnh/Thành
+            $.get(host + "?depth=1", function (data) {
+                $.each(data, function (index, item) {
+                    $("#province-select").append('<option value="' + item.code + '">' + item.name + '</option>');
+                });
+            });
+
+            // Xử lý khi chọn Tỉnh/Thành
+            $("#province-select").change(function () {
+                var provinceCode = $(this).val();
+                var provinceName = $("#province-select option:selected").text();
+                $("#province-name").val(provinceName); // <-- LƯU TÊN VÀO INPUT ẨN
+
+                if (provinceCode) {
+                    // Tải Quận/Huyện
+                    $.get(host + "p/" + provinceCode + "?depth=2", function (data) {
+                        $("#district-select").html('<option value="">Chọn Quận/Huyện</option>');
+                        $("#ward-select").html('<option value="">Chọn Phường/Xã</option>');
+                        $("#district-name").val("");
+                        $("#ward-name").val("");
+
+                        $.each(data.districts, function (index, item) {
+                            $("#district-select").append('<option value="' + item.code + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Xử lý khi chọn Quận/Huyện
+            $("#district-select").change(function () {
+                var districtCode = $(this).val();
+                var districtName = $("#district-select option:selected").text();
+                $("#district-name").val(districtName); // <-- LƯU TÊN VÀO INPUT ẨN
+
+                if (districtCode) {
+                    // Tải Phường/Xã
+                    $.get(host + "d/" + districtCode + "?depth=2", function (data) {
+                        $("#ward-select").html('<option value="">Chọn Phường/Xã</option>');
+                         $("#ward-name").val("");
+
+                        $.each(data.wards, function (index, item) {
+                            $("#ward-select").append('<option value="' + item.code + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Xử lý khi chọn Phường/Xã
+             $("#ward-select").change(function () {
+                var wardName = $("#ward-select option:selected").text();
+                $("#ward-name").val(wardName); // <-- LƯU TÊN VÀO INPUT ẨN
+             });
+        });
+    </script>
+
+    @{
+        // Thêm phần này để client-side validation hoạt động
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

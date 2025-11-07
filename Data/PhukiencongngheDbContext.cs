@@ -26,6 +26,7 @@ namespace PhuKienCongNghe.Data
             modelBuilder.Entity<Sanpham>(entity =>
             {
                 entity.Property(e => e.SoLuongTon).HasDefaultValue(0);
+
             });
 
             modelBuilder.Entity<Nguoidung>(entity =>
