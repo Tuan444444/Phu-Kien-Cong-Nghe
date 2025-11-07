@@ -76,15 +76,30 @@ namespace PhuKienCongNghe.Controllers
                     // 5. Tạo thông báo (bạn yêu cầu)
                     TempData["SuccessMessage"] = "Đăng nhập thành công!";
 
-                    // 6. Chuyển hướng
+                    // ... (Ngay sau dòng TempData["SuccessMessage"] = "Đăng nhập thành công!";)
+
+                    // === LOGIC PHÂN QUYỀN MỚI ===
+
+                    // 1. Kiểm tra xem người dùng có đang cố truy cập một trang cụ thể không
+                    // (Ví dụ: họ đang ở /Checkout thì bị bắt đăng nhập)
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
                     }
+
+                    // 2. Nếu không, chuyển hướng dựa trên vai trò (Role)
+                    // (Chúng ta dùng biến 'user' mà chúng ta đã lấy từ CSDL ở đầu hàm)
+                    if (user.VaiTro == "admin")
+                    {
+                        // Nếu là "admin", chuyển đến trang Index của AdminController
+                        return RedirectToAction("Index", "Admin");
+                    }
                     else
                     {
-                        return RedirectToAction("Index", "Product");
+                        // Nếu là "user" (hoặc vai trò khác), chuyển về trang chủ
+                        return RedirectToAction("Index", "Home");
                     }
+                    // === KẾT THÚC LOGIC MỚI ===
                 }
 
                 // Nếu sai mật khẩu hoặc không tìm thấy user

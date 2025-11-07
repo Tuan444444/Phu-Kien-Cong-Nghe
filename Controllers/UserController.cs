@@ -135,5 +135,65 @@ namespace PhuKienCongNghe.Controllers
 
             return View(orders);
         }
+
+        // ... (code của hàm Profile ở trên) ...
+
+        //===========================================================
+        // 3. CHỨC NĂNG: ĐỔI MẬT KHẨU (GET)
+        //===========================================================
+
+        // GET: /User/ChangePassword
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            // Chỉ hiển thị form
+            return View();
+        }
+
+        //===========================================================
+        // 4. CHỨC NĂNG: ĐỔI MẬT KHẨU (POST)
+        //===========================================================
+
+        // POST: /User/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Nếu form không hợp lệ (bỏ trống, mật khẩu không khớp)
+                // trả về view với các lỗi
+                return View(model);
+            }
+
+            var userId = GetCurrentUserId(); // Dùng lại hàm GetCurrentUserId() đã có
+            var user = await _context.Nguoidungs.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Không tìm thấy người dùng.");
+            }
+
+            // 1. Kiểm tra mật khẩu HIỆN TẠI có đúng không
+            var isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.MatKhau);
+
+            if (!isCurrentPasswordValid)
+            {
+                // Nếu mật khẩu hiện tại sai -> Thêm lỗi và trả về
+                ModelState.AddModelError("CurrentPassword", "Mật khẩu hiện tại không chính xác.");
+                return View(model);
+            }
+
+            // 2. Mật khẩu hiện tại đã đúng -> Băm và cập nhật mật khẩu MỚI
+            var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.MatKhau = newHashedPassword;
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            // 3. Gửi thông báo thành công và chuyển hướng
+            TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction("Profile"); // Chuyển về trang thông tin cá nhân
+        }
     }
 }

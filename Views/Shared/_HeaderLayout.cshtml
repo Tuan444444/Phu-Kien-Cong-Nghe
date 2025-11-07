@@ -1,20 +1,4 @@
-<<<<<<< HEAD
-﻿
-=======
-﻿@* <!DOCTYPE html> *@
 
-@* <html> *@
-@* <head> *@
-@*     <meta name="viewport" content="width=device-width" /> *@
-@*     <title>@ViewBag.Title</title> *@
-@* </head> *@
-@* <body> *@
-@*     <div> *@
-@*         @RenderBody() *@
-@*     </div> *@
-@* </body> *@
-@* </html> *@
->>>>>>> PKCN/cart
 @using Microsoft.AspNetCore.Http
 @using System.Security.Claims
 @inject IHttpContextAccessor HttpContextAccessor
@@ -64,6 +48,7 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
                                 <li><a class="dropdown-item" asp-controller="User" asp-action="Profile">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="ChangePassword">Đổi mật khẩu</a></li>
                                 <li><a class="dropdown-item" asp-controller="User" asp-action="OrderHistory">Lịch sử mua hàng</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
