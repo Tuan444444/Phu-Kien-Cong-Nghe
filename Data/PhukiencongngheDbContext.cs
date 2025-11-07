@@ -50,7 +50,7 @@ namespace PhuKienCongNghe.Data
             OnModelCreatingPartial(modelBuilder);
         }
 
-        // Phương thức này cho phép bạn mở rộng OnModelCreating trong một file khác
+      
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
