@@ -31,10 +31,9 @@ namespace PhuKienCongNghe.Controllers
         public IActionResult Index()
         {
             // === KIỂM TRA ĐĂNG NHẬP ===
-            if (!User.Identity.IsAuthenticated)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("Username")))
             {
-                // Nếu chưa đăng nhập, bắt chuyển đến trang đăng nhập
-                // và truyền URL trang này để quay lại sau khi đăng nhập thành công
+                // Nếu chưa đăng nhập (không có Session), bắt đi login
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Index" });
             }
 
@@ -52,7 +51,7 @@ namespace PhuKienCongNghe.Controllers
             };
 
             // Tự động điền thông tin người dùng nếu họ đã đăng nhập
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId  = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = _context.Nguoidungs.Find(int.Parse(userId)); // Tìm người dùng
             if (user != null)
             {

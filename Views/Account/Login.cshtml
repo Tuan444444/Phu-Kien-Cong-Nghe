@@ -12,7 +12,10 @@
         </div>
 
         <form asp-action="Login" method="post">
-            <div asp-validation-summary="All" class="text-danger mb-2"></div>
+            @* Dòng này quan trọng để giữ returnUrl *@
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
             <div class="mb-3">
                 <label asp-for="TenDangNhap" class="form-label fw-semibold"></label>
@@ -29,10 +32,6 @@
             <button type="submit" class="btn w-100 text-white fw-semibold" style="background-color: #ff6600;">Đăng nhập</button>
 
             <div class="text-center mt-3">
-                <a href="#" class="text-decoration-none" style="color:#ff6600;">Quên mật khẩu?</a>
-            </div>
-
-            <div class="text-center mt-2">
                 <span>Chưa có tài khoản? </span>
                 <a asp-action="Register" class="text-decoration-none" style="color:#ff6600;">Đăng ký ngay</a>
             </div>
@@ -43,24 +42,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-<style>
-    .text-orange {
-        color: #ff6600;
-    }
-
-    input.form-control {
-        background-color: #eef3ff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 12px;
-    }
-
-    .btn:hover {
-        background-color: #e65c00 !important;
-    }
-
-    .card {
-        background: #fffdfb;
-    }
-</style>
