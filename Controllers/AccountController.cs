@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PhuKienCongNghe.Data;
 using PhuKienCongNghe.Models;
 using PhuKienCongNghe.ViewModels;
-using System.Security.Claims;
+using System.Security.Claims; // Bắt buộc phải có
 
 namespace PhuKienCongNghe.Controllers
 {
@@ -18,10 +18,9 @@ namespace PhuKienCongNghe.Controllers
             _context = context;
         }
 
-        //===========================================================
-        // CHỨC NĂNG LOGIN
-        //===========================================================
-
+        //===========================
+        // 1. LOGIN (GET)
+        //===========================
         [HttpGet]
         public IActionResult Login(string? returnUrl)
         {
@@ -30,6 +29,9 @@ namespace PhuKienCongNghe.Controllers
             return View();
         }
 
+        //===========================
+        // 2. LOGIN (POST)
+        //===========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
@@ -37,87 +39,89 @@ namespace PhuKienCongNghe.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
+                // 1. Tìm user trong CSDL
                 var user = await _context.Nguoidungs
                                  .FirstOrDefaultAsync(u => u.TenDangNhap == model.TenDangNhap);
 
-                if (user == null)
+                // 2. Kiểm tra user có tồn tại và Mật khẩu có khớp (dùng BCrypt)
+                if (user != null && BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
                 {
-                    ModelState.AddModelError(string.Empty, "Tên đăng nhập không tồn tại.");
-                    return View(model);
-                }
-
-                // Kiểm tra mật khẩu đã băm
-                // (Giả định bạn đã cài: dotnet add package BCrypt.Net-Next)
-                if (BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
-                {
-                    // Tạo các "Claims" (thông tin định danh của user)
+                    // 3. TẠO "VÉ VÀO CỬA" (Claims)
+                    // Đây là các thông tin sẽ được mã hóa và lưu vào Cookie
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
+                        // Lấy TenDangNhap lưu vào ô "Tên"
                         new Claim(ClaimTypes.Name, user.TenDangNhap),
+                        
+                        // Lấy MaNguoiDung lưu vào ô "ID"
+                        new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
+                        
+                        // Lấy VaiTro lưu vào ô "Vai trò"
                         new Claim(ClaimTypes.Role, user.VaiTro)
-                        // Bạn có thể thêm các Claim khác như Email, HoTen...
                     };
 
-                    // Tạo ClaimsIdentity
-                    var claimsIdentity = new ClaimsIdentity(
-                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties
                     {
-                        // Cho phép "Ghi nhớ tôi" (chưa làm)
-                        // IsPersistent = model.RememberMe
+                        // Có thể thêm các thuộc tính khác như "IsPersistent" (Ghi nhớ đăng nhập)
                     };
 
-                    // Đăng nhập người dùng (tạo cookie xác thực)
+                    // 4. "PHÁT VÉ" CHO TRÌNH DUYỆT
+                    // Dòng này sẽ tạo ra Cookie xác thực
                     await HttpContext.SignInAsync(
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
 
-                    // Chuyển hướng về trang họ muốn
+                    // 5. Tạo thông báo (bạn yêu cầu)
+                    TempData["SuccessMessage"] = "Đăng nhập thành công!";
+
+                    // ... (Ngay sau dòng TempData["SuccessMessage"] = "Đăng nhập thành công!";)
+
+                    // === LOGIC PHÂN QUYỀN MỚI ===
+
+                    // 1. Kiểm tra xem người dùng có đang cố truy cập một trang cụ thể không
+                    // (Ví dụ: họ đang ở /Checkout thì bị bắt đăng nhập)
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
                     }
 
-                    // Nếu không, về trang chủ
-                    return RedirectToAction("Index", "Home");
+                    // 2. Nếu không, chuyển hướng dựa trên vai trò (Role)
+                    // (Chúng ta dùng biến 'user' mà chúng ta đã lấy từ CSDL ở đầu hàm)
+                    if (user.VaiTro == "admin")
+                    {
+                        // Nếu là "admin", chuyển đến trang Index của AdminController
+                        return RedirectToAction("Index", "Admin");
+                    }
+                    else
+                    {
+                        // Nếu là "user" (hoặc vai trò khác), chuyển về trang chủ
+                        return RedirectToAction("Index", "Home");
+                    }
+                    // === KẾT THÚC LOGIC MỚI ===
                 }
 
-                // Sai mật khẩu
-                ModelState.AddModelError(string.Empty, "Sai mật khẩu.");
-                return View(model);
+                // Nếu sai mật khẩu hoặc không tìm thấy user
+                ModelState.AddModelError(string.Empty, "Tên đăng nhập hoặc mật khẩu không chính xác.");
             }
 
-            // Nếu model không hợp lệ (ví dụ: bỏ trống), hiển thị lại form
+            // Nếu model không hợp lệ
             return View(model);
         }
 
-        //===========================================================
-        // CHỨC NĂNG LOGOUT
-        //===========================================================
-
-        // Dùng HttpPost để tránh lỗi CSRF
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            // Xóa cookie xác thực
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            // Về trang chủ
-            return RedirectToAction("Index", "Home");
-        }
-
-        //===========================================================
-        // CHỨC NĂNG REGISTER (Thêm vào để _LoginPartial hoạt động)
-        //===========================================================
+        //===========================
+        // 3. REGISTER (GET)
+        //===========================
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        //===========================
+        // 4. REGISTER (POST)
+        //===========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -136,7 +140,7 @@ namespace PhuKienCongNghe.Controllers
                     return View(model);
                 }
 
-                // Băm mật khẩu
+                // Băm mật khẩu (Rất quan trọng)
                 var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
 
                 var user = new Nguoidung
@@ -147,18 +151,29 @@ namespace PhuKienCongNghe.Controllers
                     MatKhau = hashedPassword, // Lưu mật khẩu đã băm
                     SoDienThoai = model.SoDienThoai,
                     DiaChi = model.DiaChi,
-                    VaiTro = "user"
+                    VaiTro = "user" // Mặc định là user
                 };
 
                 _context.Nguoidungs.Add(user);
                 await _context.SaveChangesAsync();
 
-                // Tự động đăng nhập sau khi đăng ký
-                var loginModel = new LoginViewModel { TenDangNhap = model.TenDangNhap, MatKhau = model.MatKhau };
-                // Chuyển đến Action Login (Post)
-                return await Login(loginModel, "/");
+                // Đăng ký xong, gửi thông báo và bắt người dùng đăng nhập
+                TempData["SuccessMessage"] = "Đăng ký tài khoản thành công! Vui lòng đăng nhập.";
+                return RedirectToAction("Login");
             }
             return View(model);
+        }
+
+        //===========================
+        // 5. LOGOUT
+        //===========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            // "HỦY VÉ" (Xóa Cookie)
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
     }
 }

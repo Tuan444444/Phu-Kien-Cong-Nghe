@@ -19,7 +19,7 @@ namespace PhuKienCongNghe.Models
 
         [Key]
         [Column("MaNguoiDung")]
-        public int MaNguoiDung { get; set; }
+        public int MaNguoiDung { get; set; }    
 
         [Required]
         [Column("HoTen")]
