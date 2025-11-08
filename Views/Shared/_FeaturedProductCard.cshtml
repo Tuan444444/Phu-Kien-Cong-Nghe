@@ -1,0 +1,56 @@
+﻿@model PhuKienCongNghe.Models.SanPhamNoiBat
+@{
+    // Lấy 2 đối tượng quan trọng ra
+    var sanPhamGoc = Model.Sanpham;
+    var giaMoi = Model.GiaKhuyenMai;
+
+    // Tính %
+    var percent = 0.0;
+    if (sanPhamGoc.Gia > 0 && giaMoi < sanPhamGoc.Gia)
+    {
+        percent = (1 - (giaMoi / sanPhamGoc.Gia)) * 100;
+    }
+}
+
+<div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+    <div class="card h-100 product-card">
+
+        <a asp-action="Details" asp-controller="Product" asp-route-id="@sanPhamGoc.MaSanPham">
+            <img src="@(string.IsNullOrEmpty(sanPhamGoc.HinhAnh) ? "https://via.placeholder.com/300x300.png?text=No+Image" : sanPhamGoc.HinhAnh)"
+                 class="card-img-top p-3" alt="@sanPhamGoc.TenSanPham">
+        </a>
+
+        @if (percent > 0)
+        {
+            <div class="product__item__pic__label sale"
+                 style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; padding: 2px 8px; font-size: 12px; border-radius: 4px; z-index: 1;">
+                -@percent.ToString("F0")%
+            </div>
+        }
+
+        <div class="card-body p-3 d-flex flex-column">
+            <h5 class="card-title">
+                <a asp-action="Details" asp-controller="Product" asp-route-id="@sanPhamGoc.MaSanPham" class="text-decoration-none text-dark">
+                    @sanPhamGoc.TenSanPham
+                </a>
+            </h5>
+
+            <div class="product-price mb-2 mt-auto">
+                <span class="fw-bold text-danger fs-5">@giaMoi.ToString("N0") đ</span>
+                <span class="text-muted text-decoration-line-through ms-2">@sanPhamGoc.Gia.ToString("N0") đ</span>
+            </div>
+
+            <div class="mt-2">
+                <a class="btn btn-sm btn-brand"
+                   asp-controller="Product"
+                   asp-action="Details"
+                   asp-route-id="@sanPhamGoc.MaSanPham">Xem chi tiết</a>
+
+                <a class="btn btn-sm btn-outline-secondary"
+                   asp-controller="Cart"
+                   asp-action="AddToCart"
+                   asp-route-id="@sanPhamGoc.MaSanPham">Thêm vào giỏ</a>
+            </div>
+        </div>
+    </div>
+</div>

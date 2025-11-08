@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PhuKienCongNghe.Data;
+using PhuKienCongNghe.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddDbContext<PhukiencongngheDbContext>(options =>
 
 // 3. Đăng ký dịch vụ cho Controller và View
 builder.Services.AddControllersWithViews();
+
+// 3.1. Đăng ký FeaturedProductService (do bạn thêm)
+builder.Services.AddSingleton<FeaturedProductService>();
 
 // 4. Đăng ký dịch vụ Session (Cho Giỏ Hàng)
 builder.Services.AddDistributedMemoryCache();
@@ -51,16 +55,13 @@ app.UseStaticFiles();
 app.UseRouting(); // <-- SỐ 1: BỘ ĐỊNH TUYẾN
 
 // === KHỐI QUAN TRỌNG: PHẢI ĐÚNG THỨ TỰ ===
-
 app.UseSession(); // <-- SỐ 2: Kích hoạt Session (cho giỏ hàng)
-
 app.UseAuthentication(); // <-- SỐ 3: Kích hoạt Xác thực (để đọc Cookie)
 app.UseAuthorization();  // <-- SỐ 4: Kích hoạt Phân quyền
 
 // =======================================
-
 app.MapControllerRoute( // <-- SỐ 5: PHẢI NẰM CUỐI CÙNG
     name: "default",
-    pattern: "{controller=Product}/{action=Index}/{id?}");
+    pattern: "{controller=Admin}/{action=Index}/{id?}");
 
 app.Run();

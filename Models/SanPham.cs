@@ -37,6 +37,7 @@ namespace PhuKienCongNghe.Models
         public int SoLuongTon { get; set; }
 
         [Column("MaDanhMuc")]
+        [Required(ErrorMessage = "Vui lòng chọn một danh mục")]
         public int MaDanhMuc { get; set; }
 
         [ForeignKey("MaDanhMuc")]

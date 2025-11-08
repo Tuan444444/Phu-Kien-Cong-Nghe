@@ -1,0 +1,62 @@
+﻿@model PhuKienCongNghe.Models.Sanpham
+
+@{
+    ViewData["Title"] = "Thêm Sản phẩm mới";
+    Layout = "_AdminLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="TenSanPham" class="form-label"></label>
+                <input asp-for="TenSanPham" class="form-control" />
+                <span asp-validation-for="TenSanPham" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MoTa" class="form-label"></label>
+                <textarea asp-for="MoTa" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="MoTa" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Gia" class="form-label"></label>
+                    <input asp-for="Gia" type="number" class="form-control" />
+                    <span asp-validation-for="Gia" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SoLuongTon" class="form-label"></label>
+                    <input asp-for="SoLuongTon" type="number" class="form-control" />
+                    <span asp-validation-for="SoLuongTon" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HinhAnh" class="form-label"></label>
+                <input asp-for="HinhAnh" class="form-control" placeholder="Dán link ảnh (http://...)" />
+                <span asp-validation-for="HinhAnh" class="text-danger"></span>
+               
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MaDanhMuc" class="form-label">Danh mục</label>
+                <select asp-for="MaDanhMuc" class="form-select" asp-items="ViewBag.MaDanhMuc">
+                    <option value="">-- Chọn Danh mục --</option>
+                </select>
+                <span asp-validation-for="MaDanhMuc" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-brand">Tạo mới</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
