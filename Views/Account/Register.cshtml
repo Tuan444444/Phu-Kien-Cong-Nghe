@@ -17,7 +17,6 @@
             <div class="mb-3">
                 <label asp-for="HoTen" class="form-label fw-semibold"></label>
                 <input asp-for="HoTen" class="form-control" placeholder="Họ và tên" />
-                <span asp-validation-for="HoTen" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
@@ -27,8 +26,14 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <input asp-for="Email" class="form-control" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="MatKhau" class="form-label fw-semibold"></label>
-                <input asp-for="MatKhau" type="password" class="form-control" placeholder="Mật khẩu" />
+                <input asp-for="MatKhau" type="password" class="form-control" placeholder="Mật khẩu (ít nhất 6 ký tự)" />
                 <span asp-validation-for="MatKhau" class="text-danger"></span>
             </div>
 
@@ -39,21 +44,13 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Email" class="form-label fw-semibold"></label>
-                <input asp-for="Email" class="form-control" placeholder="Email" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
                 <label asp-for="SoDienThoai" class="form-label fw-semibold"></label>
-                <input asp-for="SoDienThoai" class="form-control" placeholder="Số điện thoại" />
-                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                <input asp-for="SoDienThoai" class="form-control" placeholder="Số điện thoại (không bắt buộc)" />
             </div>
 
             <div class="mb-3">
                 <label asp-for="DiaChi" class="form-label fw-semibold"></label>
-                <input asp-for="DiaChi" class="form-control" placeholder="Địa chỉ" />
-                <span asp-validation-for="DiaChi" class="text-danger"></span>
+                <input asp-for="DiaChi" class="form-control" placeholder="Địa chỉ (không bắt buộc)" />
             </div>
 
             <button type="submit" class="btn w-100 text-white fw-semibold" style="background-color: #ff6600;">Đăng ký</button>
@@ -69,24 +66,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-<style>
-    .text-orange {
-        color: #ff6600;
-    }
-
-    input.form-control {
-        background-color: #eef3ff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 12px;
-    }
-
-    .btn:hover {
-        background-color: #e65c00 !important;
-    }
-
-    .card {
-        background: #fffdfb;
-    }
-</style>

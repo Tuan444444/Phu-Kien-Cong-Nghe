@@ -6,8 +6,11 @@ using System.Globalization; // Xóa dấu
 using System.Linq;
 using System.Text; // Dùng cho
 using System.Threading.Tasks;
-using X.PagedList;
 using X.PagedList.Extensions;
+using PhuKienCongNghe.Services;
+using PhuKienCongNghe.ViewModels;
+using X.PagedList;
+using System.Collections.Generic;
 
 namespace PhuKienCongNghe.Controllers
 {
@@ -16,11 +19,13 @@ namespace PhuKienCongNghe.Controllers
         // Biến này sẽ chứa "cầu nối" đến database
         // *** LƯU Ý: Thay 'PhuKienCongNgheContext' bằng tên file DbContext thật của bạn
         private readonly PhukiencongngheDbContext _context;
+        private readonly FeaturedProductService _featuredService;
 
         // Constructor: "Tiêm" DbContext vào Controller
-        public ProductController(PhukiencongngheDbContext context)
+        public ProductController(PhukiencongngheDbContext context, FeaturedProductService featuredService)
         {
             _context = context;
+            _featuredService = featuredService;
         }
 
         // GET: /Products
@@ -28,16 +33,40 @@ namespace PhuKienCongNghe.Controllers
         public IActionResult Index(int? page) // Bỏ "async Task<...>"
         {
             ViewData["Title"] = "Tất cả sản phẩm";
+            var viewModel = new ShopViewModel();
+
+            // --- PHẦN 1: LẤY SẢN PHẨM NỔI BẬT (TỪ FILE JSON) ---
+            var featuredEntries = _featuredService.GetAll()
+                .Take(8)
+                .ToList();
+
+            var featuredIds = featuredEntries.Select(f => f.MaSanPham).ToList();
+
+            // SỬA: "Join" bằng tay (dùng cách không async)
+            var sanphamsDictionary = _context.Sanphams
+                .Where(p => featuredIds.Contains(p.MaSanPham))
+                .ToDictionary(p => p.MaSanPham); // Bỏ ".ToDictionaryAsync"
+
+            foreach (var entry in featuredEntries)
+            {
+                if (sanphamsDictionary.TryGetValue(entry.MaSanPham, out var sanpham))
+                {
+                    entry.Sanpham = sanpham;
+                }
+            }
+            viewModel.FeaturedProducts = featuredEntries.Where(e => e.Sanpham != null).ToList();
+
+            // --- PHẦN 2: LẤY TẤT CẢ SẢN PHẨM (PHÂN TRANG TỪ SQL) ---
             int pageSize = 12;
             int pageNumber = (page ?? 1);
+            var allProducts = _context.Sanphams
+                                    .Include(s => s.MaDanhMucNavigation)
+                                    .OrderByDescending(s => s.MaSanPham);
 
-            // Bỏ "await", đổi sang .ToPagedList()
-            var products = _context.Sanphams
-                                   .Include(s => s.MaDanhMucNavigation)
-                                   .OrderByDescending(s => s.MaSanPham)
-                                   .ToPagedList(pageNumber, pageSize); // <-- SỬA Ở ĐÂY
+            // SỬA: Dùng "ToPagedList" (giống hàm gốc của bạn)
+            viewModel.AllProducts = allProducts.ToPagedList(pageNumber, pageSize);
 
-            return View(products);
+            return View(viewModel);
         }
 
         // GET: /Products/Details/5

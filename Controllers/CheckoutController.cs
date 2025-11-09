@@ -22,10 +22,11 @@ namespace PhuKienCongNghe.Controllers
             _context = context;
         }
 
-        // HÀM NỘI BỘ: Lấy giỏ hàng từ Session
+        // === HÀM NỘI BỘ: Lấy giỏ hàng từ Session ===
         private List<CartItemViewModel> GetCart()
         {
-            return HttpContext.Session.Get<List<CartItemViewModel>>(CartController.CARTKEY) ?? new List<CartItemViewModel>();
+            return HttpContext.Session.Get<List<CartItemViewModel>>(CartController.CARTKEY)
+                   ?? new List<CartItemViewModel>();
         }
         // HÀM NỘI BỘ MỚI: Lấy giỏ hàng SẼ thanh toán
         private List<CartItemViewModel> GetCheckoutCart()
@@ -35,10 +36,11 @@ namespace PhuKienCongNghe.Controllers
         // HÀM NỘI BỘ: Lấy/Tạo trạng thái thanh toán
         private CheckoutViewModel GetCheckoutState()
         {
-            return HttpContext.Session.Get<CheckoutViewModel>(CHECKOUT_STATE_KEY) ?? new CheckoutViewModel();
+            return HttpContext.Session.Get<CheckoutViewModel>(CHECKOUT_STATE_KEY)
+                   ?? new CheckoutViewModel();
         }
 
-        // HÀM NỘI BỘ: Lưu trạng thái thanh toán
+        // === HÀM NỘI BỘ: Lưu trạng thái thanh toán ===
         private void SaveCheckoutState(CheckoutViewModel state)
         {
             HttpContext.Session.Set(CHECKOUT_STATE_KEY, state);
@@ -54,8 +56,6 @@ namespace PhuKienCongNghe.Controllers
         }
 
         // --- BƯỚC 1: NHẬP ĐỊA CHỈ ---
-
-        // GET: /Checkout/Address
         [HttpGet]
         public IActionResult Address([FromQuery] List<int> ids)
         {
@@ -95,18 +95,20 @@ namespace PhuKienCongNghe.Controllers
 
             // Lấy thông tin người dùng đã đăng nhập và điền sẵn
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _context.Nguoidungs.Find(int.Parse(userId));
-            if (user != null)
+            if (!string.IsNullOrEmpty(userId))
             {
-                model.HoTenNguoiNhan = user.HoTen;
-                model.SoDienThoai = user.SoDienThoai;
-                model.Email = user.Email;
+                var user = _context.Nguoidungs.Find(int.Parse(userId));
+                if (user != null)
+                {
+                    model.HoTenNguoiNhan = user.HoTen;
+                    model.SoDienThoai = user.SoDienThoai;
+                    model.Email = user.Email;
+                }
             }
 
-            return View(model); // Tạo View "Views/Checkout/Address.cshtml"
+            return View(model); // Views/Checkout/Address.cshtml
         }
 
-        // POST: /Checkout/Address
         [HttpPost]
         public IActionResult Address(CheckoutViewModel model)
         {
@@ -161,17 +163,13 @@ namespace PhuKienCongNghe.Controllers
             // Lưu trạng thái vào Session
             SaveCheckoutState(state);
 
-            // Chuyển sang Bước 2
             return RedirectToAction("Payment");
         }
 
         // --- BƯỚC 2: CHỌN GIAO HÀNG & THANH TOÁN ---
-
-        // GET: /Checkout/Payment
         [HttpGet]
         public IActionResult Payment()
         {
-            // Kiểm tra đăng nhập và giỏ hàng
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
@@ -182,7 +180,6 @@ namespace PhuKienCongNghe.Controllers
             }
 
             var model = GetCheckoutState();
-            // Kiểm tra xem đã qua Bước 1 chưa (bằng cách check 1 trường bắt buộc)
             if (string.IsNullOrEmpty(model.TinhThanh))
             {
                 return RedirectToAction("Address");
@@ -193,36 +190,23 @@ namespace PhuKienCongNghe.Controllers
             model.CartItems = cart;
             model.TongTien = cart.Sum(item => item.ThanhTien);
 
-            // TODO: Tính phí ship dựa trên model.TinhThanh
-            // (Bạn có thể thêm logic tính phí ship ở đây)
-
-            return View(model); // Tạo View "Views/Checkout/Payment.cshtml"
+            return View(model); // Views/Checkout/Payment.cshtml
         }
 
-        // POST: /Checkout/Payment
         [HttpPost]
         public IActionResult Payment(CheckoutViewModel model)
         {
-            // Lấy trạng thái từ Session (không tin vào model post lên)
             var state = GetCheckoutState();
-
-            // Chỉ cập nhật phương thức thanh toán
             state.PaymentMethod = model.PaymentMethod;
-
-            // Lưu lại Session
             SaveCheckoutState(state);
 
-            // Chuyển sang Bước 3
             return RedirectToAction("Confirm");
         }
 
         // --- BƯỚC 3: XÁC NHẬN ĐƠN HÀNG ---
-
-        // GET: /Checkout/Confirm
         [HttpGet]
         public IActionResult Confirm()
         {
-            // Kiểm tra đăng nhập và giỏ hàng
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
@@ -233,7 +217,6 @@ namespace PhuKienCongNghe.Controllers
             }
 
             var model = GetCheckoutState();
-            // Kiểm tra xem đã qua Bước 2 chưa
             if (string.IsNullOrEmpty(model.PaymentMethod))
             {
                 return RedirectToAction("Payment");
@@ -243,15 +226,13 @@ namespace PhuKienCongNghe.Controllers
             var cart = GetCheckoutCart();
             model.CartItems = cart;
             model.TongTien = cart.Sum(item => item.ThanhTien);
-            // TODO: Thêm phí ship vào TongTien ở đây
 
-            return View(model); // Tạo View "Views/Checkout/Confirm.cshtml"
+            return View(model); // Views/Checkout/Confirm.cshtml
         }
 
-        // POST: /Checkout/Confirm
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmOrder() // Đổi tên để tránh trùng lặp
+        public async Task<IActionResult> ConfirmOrder()
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -262,16 +243,13 @@ namespace PhuKienCongNghe.Controllers
             var model = GetCheckoutState();
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            // Kiểm tra lần cuối
             if (cart.Count == 0 || string.IsNullOrEmpty(model.PaymentMethod) || string.IsNullOrEmpty(model.TinhThanh))
             {
                 return RedirectToAction("Address");
             }
 
-            // Gọi hàm xử lý COD (hoặc thanh toán online)
             if (model.PaymentMethod == "COD")
             {
-                // Gọi hàm ProcessCOD với model từ Session
                 return await ProcessCOD(model, userId, cart);
             }
             else
@@ -290,7 +268,6 @@ namespace PhuKienCongNghe.Controllers
             {
                 try
                 {
-                    // 1. Tạo đối tượng Donhang
                     var donHang = new Donhang
                     {
                         MaNguoiDung = userId,
@@ -303,9 +280,8 @@ namespace PhuKienCongNghe.Controllers
                     };
 
                     _context.Donhangs.Add(donHang);
-                    await _context.SaveChangesAsync(); // Lưu để lấy MaDonHang
+                    await _context.SaveChangesAsync();
 
-                    // 2. Thêm các Chitietdonhang
                     foreach (var item in cart)
                     {
                         var chiTiet = new Chitietdonhang
@@ -313,11 +289,10 @@ namespace PhuKienCongNghe.Controllers
                             MaDonHang = donHang.MaDonHang,
                             MaSanPham = item.MaSanPham,
                             SoLuong = item.SoLuong,
-                            DonGia = item.Gia // Lưu đơn giá tại thời điểm mua
+                            DonGia = item.Gia
                         };
                         _context.Chitietdonhangs.Add(chiTiet);
 
-                        // 3. (Quan trọng) Trừ số lượng tồn kho
                         var sanPham = await _context.Sanphams.FindAsync(item.MaSanPham);
                         if (sanPham != null && sanPham.SoLuongTon >= item.SoLuong)
                         {
@@ -325,14 +300,11 @@ namespace PhuKienCongNghe.Controllers
                         }
                         else
                         {
-                            // Nếu hết hàng, hủy transaction
                             throw new Exception($"Sản phẩm {item.TenSanPham} không đủ số lượng.");
                         }
                     }
 
-                    await _context.SaveChangesAsync(); // Lưu CTHĐ và cập nhật tồn kho
-
-                    // 4. Commit transaction
+                    await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
                     // 5. Lấy giỏ hàng CHÍNH
@@ -390,11 +362,9 @@ namespace PhuKienCongNghe.Controllers
             return View("OnlinePaymentPending"); // Tạo View này
         }
 
-
-        // GET: /Checkout/OrderSuccess
         public IActionResult OrderSuccess()
         {
-            return View("OrderSuccess"); // Tạo View này
+            return View("OrderSuccess");
         }
     }
 }

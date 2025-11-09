@@ -1,0 +1,80 @@
+
+@using Microsoft.AspNetCore.Http
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Đọc số lượng giỏ hàng từ Session
+    var cartCount = HttpContextAccessor.HttpContext?.Session.GetInt32("CartCount") ?? 0;
+}
+
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-3">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold fs-4" asp-controller="Product" asp-action="Index">
+                <i class="bi bi-headset"></i>
+                Phụ Kiện
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <div class="mx-auto my-2 my-lg-0">
+                    <form asp-controller="Product" asp-action="Search" method="get" class="d-flex" style="width: 400px;">
+                        <input name="query" class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
+                        <button class="btn btn-outline-primary" type="submit">Tìm</button>
+                    </form>
+                </div>
+
+                <div class="d-flex align-items-center ms-lg-3">
+                    <a asp-controller="Cart" asp-action="Index" class="btn btn-light position-relative me-3">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            @cartCount
+                            <span class="visually-hidden">sản phẩm trong giỏ</span>
+                        </span>
+                    </a>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        // TRẠNG THÁI ĐÃ ĐĂNG NHẬP
+                        <div class="dropdown">
+                            <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-user"></i>
+                                @User.Identity.Name
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="Profile">Thông tin cá nhân</a></li>
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="ChangePassword">Đổi mật khẩu</a></li>
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="OrderHistory">Lịch sử mua hàng</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item text-danger fw-semibold">
+                                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        // TRẠNG THÁI CHƯA ĐĂNG NHẬP
+                        <div class="d-flex">
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-login me-2">
+                                <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                            </a>
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary">
+                                <i class="fa-solid fa-user-plus"></i> Đăng ký
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
