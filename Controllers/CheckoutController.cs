@@ -5,6 +5,7 @@ using PhuKienCongNghe.Extensions;  // SessionExtensions
 using PhuKienCongNghe.Models;      // Models (Donhang, Chitietdonhang)
 using PhuKienCongNghe.ViewModels; // ViewModels
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims; // Dùng để lấy ID người dùng
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace PhuKienCongNghe.Controllers
     {
         private readonly PhukiencongngheDbContext _context;
         public const string CHECKOUT_STATE_KEY = "CheckoutState";
+        public const string CHECKOUT_CART_KEY = "CheckoutCart"; // Giỏ hàng con để thanh toán
         public CheckoutController(PhukiencongngheDbContext context)
         {
             _context = context;
@@ -24,6 +26,11 @@ namespace PhuKienCongNghe.Controllers
         private List<CartItemViewModel> GetCart()
         {
             return HttpContext.Session.Get<List<CartItemViewModel>>(CartController.CARTKEY) ?? new List<CartItemViewModel>();
+        }
+        // HÀM NỘI BỘ MỚI: Lấy giỏ hàng SẼ thanh toán
+        private List<CartItemViewModel> GetCheckoutCart()
+        {
+            return HttpContext.Session.Get<List<CartItemViewModel>>(CHECKOUT_CART_KEY) ?? new List<CartItemViewModel>();
         }
         // HÀM NỘI BỘ: Lấy/Tạo trạng thái thanh toán
         private CheckoutViewModel GetCheckoutState()
@@ -36,21 +43,50 @@ namespace PhuKienCongNghe.Controllers
         {
             HttpContext.Session.Set(CHECKOUT_STATE_KEY, state);
         }
+        private void SaveCartSession(List<CartItemViewModel> cart)
+        {
+            // Dùng hàm "Set" từ file SessionExtensions.cs của bạn
+            HttpContext.Session.Set(CartController.CARTKEY, cart);
+            // Tính tổng SỐ LƯỢNG (Quantity) của tất cả items
+            int totalQuantity = cart.Sum(item => item.SoLuong);
+            // Lưu tổng số lượng vào một Session key MỚI
+            HttpContext.Session.SetInt32("CartCount", totalQuantity);
+        }
 
         // --- BƯỚC 1: NHẬP ĐỊA CHỈ ---
 
         // GET: /Checkout/Address
         [HttpGet]
-        public IActionResult Address()
+        public IActionResult Address([FromQuery] List<int> ids)
         {
             // Kiểm tra đăng nhập
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
             }
-            // Kiểm tra giỏ hàng
-            if (GetCart().Count == 0)
+            List<CartItemViewModel> checkoutCart;
+
+            if (ids != null && ids.Count > 0)
             {
+                // 2. Lọc giỏ hàng chính dựa trên 'ids'
+                var mainCart = GetCart(); // Lấy giỏ hàng TỔNG
+                checkoutCart = mainCart.Where(item => ids.Contains(item.MaSanPham)).ToList();
+
+                // 3. Lưu giỏ hàng con này vào Session MỚI
+                HttpContext.Session.Set(CHECKOUT_CART_KEY, checkoutCart);
+            }
+            else
+            {
+                // 4. Xử lý trường hợp F5 (tải lại trang)
+                // Thử lấy giỏ hàng con từ Session
+                checkoutCart = HttpContext.Session.Get<List<CartItemViewModel>>(CHECKOUT_CART_KEY) ?? new List<CartItemViewModel>();
+            }
+
+            // 5. Kiểm tra giỏ hàng con (thay vì giỏ hàng chính)
+            if (checkoutCart.Count == 0)
+            {
+                // Nếu không có gì để thanh toán, quay về giỏ hàng chính
+                TempData["ErrorMessage"] = "Bạn chưa chọn sản phẩm để thanh toán.";
                 return RedirectToAction("Index", "Cart");
             }
 
@@ -74,6 +110,41 @@ namespace PhuKienCongNghe.Controllers
         [HttpPost]
         public IActionResult Address(CheckoutViewModel model)
         {
+            model.TinhThanh = Request.Form["TinhThanh"];
+            model.QuanHuyen = Request.Form["QuanHuyen"];
+            model.PhuongXa = Request.Form["PhuongXa"];
+
+            ModelState.Remove(nameof(model.PaymentMethod));
+            ModelState.Remove(nameof(model.CartItems));
+
+            if (!ModelState.IsValid)
+            {
+                // === PHẦN DEBUG ===
+                // Lấy tất cả các lỗi
+                var errors = ModelState
+                    .Where(kvp => kvp.Value.Errors.Count > 0)
+                    .Select(kvp => new {
+                        Field = kvp.Key,
+                        Errors = kvp.Value.Errors.Select(e => e.ErrorMessage).ToList()
+                    });
+
+                // Tạo một thông báo lỗi lớn
+                string errorMessage = "ModelState không hợp lệ. Các lỗi:<br/>";
+                foreach (var error in errors)
+                {
+                    errorMessage += $"<b>Trường:</b> {error.Field}<br/>";
+                    foreach (var msg in error.Errors)
+                    {
+                        errorMessage += $"- {msg}<br/>";
+                    }
+                }
+
+                // Gán lỗi này vào TempData để hiển thị ở View
+                TempData["DebugError"] = errorMessage;
+
+                // Trả về View với các lỗi validation (màu đỏ)
+                return View(model);
+            }
             // Lấy trạng thái hiện tại (để không mất các thông tin khác)
             var state = GetCheckoutState();
 
@@ -105,7 +176,7 @@ namespace PhuKienCongNghe.Controllers
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
             }
-            if (GetCart().Count == 0)
+            if (GetCheckoutCart().Count == 0)
             {
                 return RedirectToAction("Index", "Cart");
             }
@@ -118,7 +189,7 @@ namespace PhuKienCongNghe.Controllers
             }
 
             // Cập nhật giỏ hàng và tổng tiền vào model (để hiển thị)
-            var cart = GetCart();
+            var cart = GetCheckoutCart();
             model.CartItems = cart;
             model.TongTien = cart.Sum(item => item.ThanhTien);
 
@@ -156,7 +227,7 @@ namespace PhuKienCongNghe.Controllers
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Checkout/Address" });
             }
-            if (GetCart().Count == 0)
+            if (GetCheckoutCart().Count == 0)
             {
                 return RedirectToAction("Index", "Cart");
             }
@@ -169,7 +240,7 @@ namespace PhuKienCongNghe.Controllers
             }
 
             // Lấy giỏ hàng và tổng tiền để hiển thị lần cuối
-            var cart = GetCart();
+            var cart = GetCheckoutCart();
             model.CartItems = cart;
             model.TongTien = cart.Sum(item => item.ThanhTien);
             // TODO: Thêm phí ship vào TongTien ở đây
@@ -187,7 +258,7 @@ namespace PhuKienCongNghe.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var cart = GetCart();
+            var cart = GetCheckoutCart();
             var model = GetCheckoutState();
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -205,6 +276,7 @@ namespace PhuKienCongNghe.Controllers
             }
             else
             {
+                TempData["PaymentAmount"] = cart.Sum(item => item.ThanhTien).ToString();
                 // Xử lý thanh toán online
                 return RedirectToAction("ProcessOnlinePayment");
             }
@@ -212,6 +284,7 @@ namespace PhuKienCongNghe.Controllers
 
         private async Task<IActionResult> ProcessCOD(CheckoutViewModel model, int userId, List<CartItemViewModel> cart)
         {
+            double tongTienDonHang = cart.Sum(item => item.ThanhTien);
             // Dùng Transaction để đảm bảo an toàn dữ liệu
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -225,7 +298,7 @@ namespace PhuKienCongNghe.Controllers
                         HoTenNguoiNhan = model.HoTenNguoiNhan,
                         SDTNguoiNhan = model.SoDienThoai,
                         DiaChiNhanHang = $"{model.DiaChiCuThe}, {model.PhuongXa}, {model.QuanHuyen}, {model.TinhThanh}",
-                        TongTien = model.TongTien,
+                        TongTien = tongTienDonHang,
                         TrangThai = "Chờ xử lý" // Trạng thái mặc định
                     };
 
@@ -262,20 +335,40 @@ namespace PhuKienCongNghe.Controllers
                     // 4. Commit transaction
                     await transaction.CommitAsync();
 
-                    // 5. Xóa giỏ hàng khỏi Session
-                    HttpContext.Session.Remove(CartController.CARTKEY);
-                    HttpContext.Session.Remove("CartCount"); // Xóa cả bộ đếm
+                    // 5. Lấy giỏ hàng CHÍNH
+                    var mainCart = GetCart();
 
-                    // 6. Chuyển đến trang thành công
+                    // 6. Lấy giỏ hàng ĐÃ MUA (là biến 'cart' được truyền vào)
+                    // và xóa các sản phẩm đã mua khỏi giỏ hàng CHÍNH
+                    mainCart.RemoveAll(item => cart.Any(p => p.MaSanPham == item.MaSanPham));
+
+                    // 7. Lưu lại giỏ hàng CHÍNH (đã được cập nhật)
+                    SaveCartSession(mainCart);
+
+                    // 8. Xóa các Session của checkout
+                    HttpContext.Session.Remove(CHECKOUT_CART_KEY);
+                    HttpContext.Session.Remove(CHECKOUT_STATE_KEY);
+
+                    // 9. Chuyển đến trang thành công
                     return RedirectToAction("OrderSuccess");
                 }
                 catch (Exception ex)
                 {
-                    // Nếu có lỗi, rollback tất cả
                     await transaction.RollbackAsync();
-                    ModelState.AddModelError(string.Empty, $"Lỗi khi đặt hàng: {ex.Message}. Vui lòng thử lại.");
-                    return View("Index", model); // Quay lại trang Index với model và lỗi
+
+                    var message = ex.Message;
+                    if (ex.InnerException != null)
+                    {
+                        message += " | INNER: " + ex.InnerException.Message;
+                    }
+
+                    ModelState.AddModelError(string.Empty, $"Lỗi khi đặt hàng: {message}");
+                    // Gửi model (từ Session) và lỗi trở lại BƯỚC 3 (Confirm)
+                    model.CartItems = cart;
+                    model.TongTien = tongTienDonHang;
+                    return View("Confirm", model); // Trả về BƯỚC 3 (Confirm), không phải Address
                 }
+
             }
         }
 
@@ -285,7 +378,7 @@ namespace PhuKienCongNghe.Controllers
         }
 
         // GET: /Checkout/ProcessOnlinePayment
-        public IActionResult ProcessOnlinePayment(double amount)
+        public IActionResult ProcessOnlinePayment()
         {
             // TODO: Tích hợp VNPAY/MoMo tại đây
             // 1. Tạo một đơn hàng trong CSDL với trạng thái "Chờ thanh toán"
@@ -294,7 +387,6 @@ namespace PhuKienCongNghe.Controllers
             // 4. Redirect người dùng đến URL đó
 
             // Tạm thời, chúng ta sẽ trả về một View thông báo
-            TempData["PaymentAmount"] = amount;
             return View("OnlinePaymentPending"); // Tạo View này
         }
 
