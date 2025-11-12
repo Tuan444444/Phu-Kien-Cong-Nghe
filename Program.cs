@@ -15,7 +15,7 @@ builder.Services.AddDbContext<PhukiencongngheDbContext>(options =>
 // 3. Đăng ký dịch vụ cho Controller và View
 builder.Services.AddControllersWithViews();
 
-// 3.1. Đăng ký FeaturedProductService (do bạn thêm)
+// 3.1. Đăng ký FeaturedProductService (chỉ 1 lần)
 builder.Services.AddSingleton<FeaturedProductService>();
 
 // 4. Đăng ký dịch vụ Session (Cho Giỏ Hàng)
@@ -60,6 +60,9 @@ app.UseAuthentication(); // <-- SỐ 3: Kích hoạt Xác thực (để đọc C
 app.UseAuthorization();  // <-- SỐ 4: Kích hoạt Phân quyền
 
 // =======================================
+
+// --- SỬA LỖI CONFLICT ---
+// Đặt trang chủ mặc định là trang Bán hàng (Product)
 app.MapControllerRoute( // <-- SỐ 5: PHẢI NẰM CUỐI CÙNG
     name: "default",
     pattern: "{controller=Product}/{action=Index}/{id?}");

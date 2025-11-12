@@ -56,11 +56,11 @@
                             <td class="text-center">
                                 @{
                                     var statusClass = "secondary"; // Mặc định
+
                                     if (item.TrangThai == "Đang xử lý") { statusClass = "primary"; }
                                     else if (item.TrangThai == "Hoàn thành") { statusClass = "success"; }
                                     else if (item.TrangThai == "Đã hủy") { statusClass = "danger"; }
                                     else if (item.TrangThai == "Đang giao") { statusClass = "info"; }
-                                   
                                 }
                                 <span class="badge bg-@statusClass">@item.TrangThai</span>
                             </td>

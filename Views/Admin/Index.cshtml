@@ -1,4 +1,4 @@
-﻿@model PhuKienCongNghe.ViewModels.DashboardViewModel
+@model PhuKienCongNghe.ViewModels.DashboardViewModel
 @{
     ViewData["Title"] = "Bảng điều khiển";
     Layout = "_AdminLayout";
@@ -142,63 +142,60 @@
     <script>
         $(document).ready(function () {
 
-            // --- BIỂU ĐỒ 1: DOANH THU (Giữ nguyên) ---
+            // --- BIỂU ĐỒ 1: DOANH THU ---
             $.ajax({
                 url: '@Url.Action("GetRevenueChartData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myRevenueChart').getContext('2d');
+                    const ctx = document.getElementById('myRevenueChart').getContext('d');
                     new Chart(ctx, { type: 'line', data: { labels: result.labels, datasets: [{ label: 'Doanh thu', data: result.data, borderColor: '#0d6efd', backgroundColor: 'rgba(13, 110, 253, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: '#0d6efd', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: function (value) { return new Intl.NumberFormat('vi-VN').format(value) + ' đ'; } }, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' đ'; } return label; } } } } } });
                 }, error: function () { console.log('Lỗi tải biểu đồ Doanh thu.'); }
             });
 
-            // --- BIỂU ĐỒ 2: TOP SẢN PHẨM (Giữ nguyên) ---
+            // --- BIỂU ĐỒ 2: TOP SẢN PHẨM ---
             $.ajax({
                 url: '@Url.Action("GetTopProductsChartData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myTopProductsChart').getContext('2d');
+                    const ctx = document.getElementById('myTopProductsChart').getContext('d');
                     new Chart(ctx, { type: 'bar', data: { labels: result.labels, datasets: [{ label: 'Số lượng bán', data: result.data, backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'], borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'], borderWidth: 1 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, y: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { return ' Đã bán: ' + context.parsed.x + ' sản phẩm'; } } } } } });
                 }, error: function () { console.log('Lỗi tải biểu đồ Top Sản phẩm.'); }
             });
 
-            // --- BIỂU ĐỒ 3: CƠ CẤU DOANH THU (Giữ nguyên) ---
+            // --- BIỂU ĐỒ 3: CƠ CẤU DOANH THU ---
             $.ajax({
                 url: '@Url.Action("GetCategoryRevenueData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('2d');
+                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('d');
                     new Chart(ctx, { type: 'doughnut', data: { labels: result.labels, datasets: [{ label: 'Doanh thu', data: result.data, backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function (context) { let label = context.label || ''; let value = context.parsed; return ' ' + label + ': ' + new Intl.NumberFormat('vi-VN').format(value) + ' đ'; } } } } } });
                 }, error: function () {
                     console.log('Lỗi tải biểu đồ Doanh thu Danh mục.');
-                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('2d');
+                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('d');
                     ctx.font = "16px Arial"; ctx.fillStyle = "red"; ctx.textAlign = "center";
                     ctx.fillText("Lỗi: Không thể tải dữ liệu.", ctx.canvas.width / 2, ctx.canvas.height / 2);
                 }
             });
 
-            //
-            // --- 4. THÊM MỚI: BIỂU ĐỒ 4: TÌNH TRẠNG ĐƠN HÀNG ---
-            //
+            // --- BIỂU ĐỒ 4: TÌNH TRẠNG ĐƠN HÀNG ---
             $.ajax({
-                url: '@Url.Action("GetOrderStatusData", "Admin")', // Gọi hàm mới
+                url: '@Url.Action("GetOrderStatusData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myOrderStatusChart').getContext('2d');
-
+                    const ctx = document.getElementById('myOrderStatusChart').getContext('d');
                     const myOrderStatusChart = new Chart(ctx, {
-                        type: 'pie', // Dùng Pie (tròn đặc)
+                        type: 'pie',
                         data: {
-                            labels: result.labels, // Trạng thái (Hoàn thành, Đã hủy...)
+                            labels: result.labels,
                             datasets: [{
                                 label: 'Số lượng',
-                                data: result.data, // Số lượng đơn
+                                data: result.data,
                                 backgroundColor: [
-                                    'rgba(25, 135, 84, 0.7)',  // Màu xanh lá (Hoàn thành)
-                                    'rgba(255, 193, 7, 0.7)',   // Màu vàng (Chờ xác nhận)
-                                    'rgba(13, 202, 240, 0.7)',  // Màu xanh lơ (Đang giao)
-                                    'rgba(220, 53, 69, 0.7)',   // Màu đỏ (Đã hủy)
-                                    'rgba(108, 117, 125, 0.7)'  // Màu xám (Trạng thái khác)
+                                    'rgba(25, 135, 84, 0.7)',  // Hoàn thành
+                                    'rgba(255, 193, 7, 0.7)',   // Chờ xác nhận
+                                    'rgba(13, 202, 240, 0.7)',  // Đang giao
+                                    'rgba(220, 53, 69, 0.7)',   // Đã hủy
+                                    'rgba(108, 117, 125, 0.7)'  // Khác
                                 ],
                                 hoverOffset: 4
                             }]
@@ -225,7 +222,7 @@
                 },
                 error: function () {
                     console.log('Lỗi tải biểu đồ Tình trạng Đơn hàng.');
-                    const ctx = document.getElementById('myOrderStatusChart').getContext('2d');
+                    const ctx = document.getElementById('myOrderStatusChart').getContext('d');
                     ctx.font = "16px Arial"; ctx.fillStyle = "red"; ctx.textAlign = "center";
                     ctx.fillText("Lỗi: Không thể tải dữ liệu.", ctx.canvas.width / 2, ctx.canvas.height / 2);
                 }
