@@ -57,38 +57,37 @@ namespace PhuKienCongNghe.Controllers
         //
         // --- HÀM 2: BIỂU ĐỒ DOANH THU 7 NGÀY (Line Chart) ---
         //
-        [HttpGet]
-        public async Task<IActionResult> GetRevenueChartData()
-        {
-            var homNay = DateTime.Today;
-            var labels = new List<string>();
-            var data = new List<double>();
-
-            for (int i = 6; i >= 0; i--)
+            [HttpGet]
+            public async Task<IActionResult> GetRevenueChartData()
             {
-                var ngay = homNay.AddDays(-i);
-                var doanhThuNgay = await _context.Donhangs
-                    .Where(d => d.TrangThai == "Hoàn thành" &&
-                                d.NgayDat.HasValue &&
-                                d.NgayDat.Value.Date == ngay.Date)
-                    .SumAsync(d => d.TongTien);
+                var homNay = DateTime.Today;
+                var labels = new List<string>();
+                var data = new List<double>();
 
-                labels.Add(ngay.ToString("dd/MM"));
-                data.Add(doanhThuNgay);
+                for (int i = 6; i >= 0; i--)
+                {
+                    var ngay = homNay.AddDays(-i);
+                    var doanhThuNgay = await _context.Donhangs
+                        .Where(d => d.TrangThai == "Hoàn thành" &&
+                                    d.NgayDat.HasValue &&
+                                    d.NgayDat.Value.Date == ngay.Date)
+                        .SumAsync(d => d.TongTien);
+
+                    labels.Add(ngay.ToString("dd/MM"));
+                    data.Add(doanhThuNgay);
+                }
+                return Json(new { Labels = labels, Data = data });
             }
-            return Json(new { Labels = labels, Data = data });
-        }
 
-        //
-        // --- HÀM 3: TOP 5 SẢN PHẨM (Horizontal Bar Chart) ---
+        // GET: /Admin/GetTopProductsListData
         //
         [HttpGet]
-        public async Task<IActionResult> GetTopProductsChartData()
+        public async Task<IActionResult> GetTopProductsListData()
         {
+            // 1. Lấy Top 5 (Giống hệt code cũ)
             var topProductsData = await _context.Chitietdonhangs
                 .GroupBy(c => c.MaSanPham)
-                .Select(g => new
-                {
+                .Select(g => new {
                     MaSanPham = g.Key,
                     TongSoLuong = g.Sum(c => c.SoLuong)
                 })
@@ -96,21 +95,32 @@ namespace PhuKienCongNghe.Controllers
                 .Take(5)
                 .ToListAsync();
 
-            var labels = new List<string>();
-            var data = new List<int>();
+            var resultList = new List<TopProductViewModel>();
 
-            foreach (var item in topProductsData.OrderBy(x => x.TongSoLuong))
+            // 2. Lấy số lượng của sản phẩm bán chạy NHẤT (để làm mốc 100%)
+            int maxSoLuong = topProductsData.FirstOrDefault()?.TongSoLuong ?? 0;
+            if (maxSoLuong == 0) maxSoLuong = 1; // Tránh lỗi chia cho 0
+
+            // 3. Xử lý dữ liệu
+            foreach (var item in topProductsData)
             {
                 var sanpham = await _context.Sanphams.FindAsync(item.MaSanPham);
                 if (sanpham != null)
                 {
-                    labels.Add(sanpham.TenSanPham);
-                    data.Add(item.TongSoLuong);
+                    resultList.Add(new TopProductViewModel
+                    {
+                        TenSanPham = sanpham.TenSanPham,
+                        SoLuongDaBan = item.TongSoLuong,
+                        // Tính tỷ lệ % so với sản phẩm bán chạy nhất
+                        TyLePhanTram = (int)((double)item.TongSoLuong / maxSoLuong * 100)
+                    });
                 }
             }
-            return Json(new { Labels = labels, Data = data });
-        }
 
+            // 4. Trả về JSON (danh sách mới)
+            return Json(resultList);
+        }
+       
         //
         // --- HÀM 4: CƠ CẤU DOANH THU (Doughnut Chart) ---
         //

@@ -48,8 +48,7 @@
             <div class="card-header">
                 Top 5 Sản phẩm bán chạy
             </div>
-            <div class="card-body" style="min-height: 320px;">
-                <canvas id="myTopProductsChart"></canvas>
+            <div class="card-body" style="min-height: 320px;" id="topProductsListContainer">
             </div>
         </div>
     </div>
@@ -135,6 +134,44 @@
             .card:hover {
                 transform: translateY(-2px);
             }
+
+        /* --- CSS CHO DANH SÁCH TOP SẢN PHẨM --- */
+        .top-product-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+
+            .top-product-list li {
+                padding: 10px 0;
+                border-bottom: 1px solid #eee;
+            }
+
+                .top-product-list li:last-child {
+                    border-bottom: none;
+                }
+
+        .product-name-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            align-items: flex-start;
+        }
+
+        .product-name {
+            font-size: 0.9rem;
+            color: #5a5c69;
+            font-weight: 600;
+            white-space: normal;
+            word-break: break-word;
+            margin-right: 10px;
+        }
+
+        .product-sold {
+            font-size: 0.85rem;
+            color: #858796;
+            white-space: nowrap;
+        }
     </style>
 }
 @section Scripts {
@@ -146,7 +183,7 @@
                 url: '@Url.Action("GetRevenueChartData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    // --- SỬA LỖI Ở ĐÂY ---
+                    // --- SỬA LỖI: 'd' thành '2d' ---
                     const ctx = document.getElementById('myRevenueChart').getContext('2d');
                     new Chart(ctx, { type: 'line', data: { labels: result.labels, datasets: [{ label: 'Doanh thu', data: result.data, borderColor: '#0d6efd', backgroundColor: 'rgba(13, 110, 253, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: '#0d6efd', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: function (value) { return new Intl.NumberFormat('vi-VN').format(value) + ' đ'; } }, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' đ'; } return label; } } } } } });
                 }, error: function () {
@@ -157,33 +194,54 @@
                 }
             });
 
-            // --- BIỂU ĐỒ 2: TOP SẢN PHẨM ---
+            // --- DANH SÁCH 2: TOP SẢN PHẨM ---
             $.ajax({
-                url: '@Url.Action("GetTopProductsChartData", "Admin")',
+                url: '@Url.Action("GetTopProductsListData", "Admin")', // <-- Gọi hàm MỚI
                 type: 'GET',
-                success: function (result) {
-                    // --- SỬA LỖI Ở ĐÂY ---
-                    const ctx = document.getElementById('myTopProductsChart').getContext('2d');
-                    new Chart(ctx, { type: 'bar', data: { labels: result.labels, datasets: [{ label: 'Số lượng bán', data: result.data, backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'], borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'], borderWidth: 1 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, y: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { return ' Đã bán: ' + context.parsed.x + ' sản phẩm'; } } } } } });
-                }, error: function () {
-                    console.log('Lỗi tải biểu đồ Top Sản phẩm.');
-                    const ctx_err = document.getElementById('myTopProductsChart').getContext('2d');
-                    ctx_err.font = "16px Arial"; ctx_err.fillStyle = "red"; ctx_err.textAlign = "center";
-                    ctx_err.fillText("Lỗi: Không thể tải dữ liệu.", ctx_err.canvas.width / 2, ctx_err.canvas.height / 2);
+                success: function (products) {
+
+                    var container = $('#topProductsListContainer');
+                    if (products && products.length > 0) {
+
+                        var html = '<ul class="top-product-list">';
+
+                        $.each(products, function(index, product) {
+                            html += '<li>';
+                            html += '  <div class="product-name-line">';
+                            html += '    <span class="product-name">' + (index + 1) + '. ' + product.tenSanPham + '</span>';
+                            html += '    <span class="product-sold">Đã bán: ' + product.soLuongDaBan + '</span>';
+                            html += '  </div>';
+                            html += '  <div class="progress" style="height: 8px;">';
+                            html += '    <div class="progress-bar" role="progressbar" style="width: ' + product.tyLePhanTram + '%" aria-valuenow="' + product.tyLePhanTram + '" aria-valuemin="0" aria-valuemax="100"></div>';
+                            html += '  </div>';
+                            html += '</li>';
+                        });
+
+                        html += '</ul>';
+                        container.html(html);
+
+                    } else {
+                        container.html('<p class="text-center text-muted mt-5">Chưa có dữ liệu sản phẩm.</p>');
+                    }
+                },
+                error: function () {
+                    console.log('Lỗi tải Top Sản phẩm.');
+                    $('#topProductsListContainer').html('<p class="text-center text-danger mt-5">Lỗi tải dữ liệu.</p>');
                 }
             });
+
 
             // --- BIỂU ĐỒ 3: CƠ CẤU DOANH THU ---
             $.ajax({
                 url: '@Url.Action("GetCategoryRevenueData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    // --- SỬA LỖI Ở ĐÂY ---
+                    // --- SỬA LỖI: 'd' thành '2d' ---
                     const ctx = document.getElementById('myCategoryRevenueChart').getContext('2d');
                     new Chart(ctx, { type: 'doughnut', data: { labels: result.labels, datasets: [{ label: 'Doanh thu', data: result.data, backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function (context) { let label = context.label || ''; let value = context.parsed; return ' ' + label + ': ' + new Intl.NumberFormat('vi-VN').format(value) + ' đ'; } } } } } });
                 }, error: function () {
                     console.log('Lỗi tải biểu đồ Doanh thu Danh mục.');
-                    // --- SỬA LỖI Ở ĐÂY ---
+                    // --- SỬA LỖI: 'd' thành '2d' ---
                     const ctx = document.getElementById('myCategoryRevenueChart').getContext('2d');
                     ctx.font = "16px Arial"; ctx.fillStyle = "red"; ctx.textAlign = "center";
                     ctx.fillText("Lỗi: Không thể tải dữ liệu.", ctx.canvas.width / 2, ctx.canvas.height / 2);
@@ -195,7 +253,7 @@
                 url: '@Url.Action("GetOrderStatusData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    // --- SỬA LỖI Ở ĐÂY ---
+                    // --- SỬA LỖI: 'd' thành '2d' ---
                     const ctx = document.getElementById('myOrderStatusChart').getContext('2d');
                     const myOrderStatusChart = new Chart(ctx, {
                         type: 'pie',
@@ -236,7 +294,7 @@
                 },
                 error: function () {
                     console.log('Lỗi tải biểu đồ Tình trạng Đơn hàng.');
-                    // --- SỬA LỖI Ở ĐÂY ---
+                    // --- SỬA LỖI: 'd' thành '2d' ---
                     const ctx = document.getElementById('myOrderStatusChart').getContext('2d');
                     ctx.font = "16px Arial"; ctx.fillStyle = "red"; ctx.textAlign = "center";
                     ctx.fillText("Lỗi: Không thể tải dữ liệu.", ctx.canvas.width / 2, ctx.canvas.height / 2);
