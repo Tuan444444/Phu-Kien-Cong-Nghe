@@ -277,7 +277,7 @@ namespace PhuKienCongNghe.Controllers
                         DiaChiNhanHang = $"{model.DiaChiCuThe}, {model.PhuongXa}, {model.QuanHuyen}, {model.TinhThanh}",
                         // --- ĐÃ SỬA CONFLICT 1 ---
                         TongTien = tongTienDonHang,
-                        TrangThai = "Chờ xử lý" // Trạng thái mặc định
+                        TrangThai = "Đang xử lý" // Trạng thái mặc định
                     };
 
                     _context.Donhangs.Add(donHang);
