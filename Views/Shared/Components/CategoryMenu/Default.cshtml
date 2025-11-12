@@ -1,0 +1,19 @@
+﻿@model IEnumerable<PhuKienCongNghe.Models.Danhmuc>
+
+<ul class="navbar-nav">
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Product" asp-action="Index">Tất Cả Sản Phẩm</a>
+    </li>
+
+    @foreach (var category in Model)
+    {
+        <li class="nav-item">
+            <a class="nav-link"
+               asp-controller="Product"
+               asp-action="Category"
+               asp-route-id="@category.MaDanhMuc">
+                @category.TenDanhMuc
+            </a>
+        </li>
+    }
+</ul>
