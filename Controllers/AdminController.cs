@@ -41,7 +41,7 @@ namespace PhuKienCongNghe.Controllers
 
             // Hộp 2: Đơn hàng mới
             viewModel.DonHangMoi = await _context.Donhangs
-                .CountAsync(d => d.TrangThai == "Chờ xác nhận");
+                .CountAsync(d => d.TrangThai == "Đang xử lý");
 
             // Hộp 3: Tổng số Khách hàng
             viewModel.TongKhachHang = await _context.Nguoidungs

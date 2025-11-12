@@ -137,7 +137,6 @@
             }
     </style>
 }
-
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -147,9 +146,15 @@
                 url: '@Url.Action("GetRevenueChartData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myRevenueChart').getContext('d');
+                    // --- SỬA LỖI Ở ĐÂY ---
+                    const ctx = document.getElementById('myRevenueChart').getContext('2d');
                     new Chart(ctx, { type: 'line', data: { labels: result.labels, datasets: [{ label: 'Doanh thu', data: result.data, borderColor: '#0d6efd', backgroundColor: 'rgba(13, 110, 253, 0.1)', fill: true, tension: 0.3, pointBackgroundColor: '#0d6efd', pointBorderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { callback: function (value) { return new Intl.NumberFormat('vi-VN').format(value) + ' đ'; } }, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { let label = context.dataset.label || ''; if (label) { label += ': '; } if (context.parsed.y !== null) { label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' đ'; } return label; } } } } } });
-                }, error: function () { console.log('Lỗi tải biểu đồ Doanh thu.'); }
+                }, error: function () {
+                    console.log('Lỗi tải biểu đồ Doanh thu.');
+                    const ctx_err = document.getElementById('myRevenueChart').getContext('2d');
+                    ctx_err.font = "16px Arial"; ctx_err.fillStyle = "red"; ctx_err.textAlign = "center";
+                    ctx_err.fillText("Lỗi: Không thể tải dữ liệu.", ctx_err.canvas.width / 2, ctx_err.canvas.height / 2);
+                }
             });
 
             // --- BIỂU ĐỒ 2: TOP SẢN PHẨM ---
@@ -157,9 +162,15 @@
                 url: '@Url.Action("GetTopProductsChartData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myTopProductsChart').getContext('d');
+                    // --- SỬA LỖI Ở ĐÂY ---
+                    const ctx = document.getElementById('myTopProductsChart').getContext('2d');
                     new Chart(ctx, { type: 'bar', data: { labels: result.labels, datasets: [{ label: 'Số lượng bán', data: result.data, backgroundColor: ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'], borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'], borderWidth: 1 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } }, y: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (context) { return ' Đã bán: ' + context.parsed.x + ' sản phẩm'; } } } } } });
-                }, error: function () { console.log('Lỗi tải biểu đồ Top Sản phẩm.'); }
+                }, error: function () {
+                    console.log('Lỗi tải biểu đồ Top Sản phẩm.');
+                    const ctx_err = document.getElementById('myTopProductsChart').getContext('2d');
+                    ctx_err.font = "16px Arial"; ctx_err.fillStyle = "red"; ctx_err.textAlign = "center";
+                    ctx_err.fillText("Lỗi: Không thể tải dữ liệu.", ctx_err.canvas.width / 2, ctx_err.canvas.height / 2);
+                }
             });
 
             // --- BIỂU ĐỒ 3: CƠ CẤU DOANH THU ---
@@ -167,11 +178,13 @@
                 url: '@Url.Action("GetCategoryRevenueData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('d');
+                    // --- SỬA LỖI Ở ĐÂY ---
+                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('2d');
                     new Chart(ctx, { type: 'doughnut', data: { labels: result.labels, datasets: [{ label: 'Doanh thu', data: result.data, backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)', 'rgba(255, 206, 86, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)', 'rgba(255, 159, 64, 0.7)'], hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: function (context) { let label = context.label || ''; let value = context.parsed; return ' ' + label + ': ' + new Intl.NumberFormat('vi-VN').format(value) + ' đ'; } } } } } });
                 }, error: function () {
                     console.log('Lỗi tải biểu đồ Doanh thu Danh mục.');
-                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('d');
+                    // --- SỬA LỖI Ở ĐÂY ---
+                    const ctx = document.getElementById('myCategoryRevenueChart').getContext('2d');
                     ctx.font = "16px Arial"; ctx.fillStyle = "red"; ctx.textAlign = "center";
                     ctx.fillText("Lỗi: Không thể tải dữ liệu.", ctx.canvas.width / 2, ctx.canvas.height / 2);
                 }
@@ -182,7 +195,8 @@
                 url: '@Url.Action("GetOrderStatusData", "Admin")',
                 type: 'GET',
                 success: function (result) {
-                    const ctx = document.getElementById('myOrderStatusChart').getContext('d');
+                    // --- SỬA LỖI Ở ĐÂY ---
+                    const ctx = document.getElementById('myOrderStatusChart').getContext('2d');
                     const myOrderStatusChart = new Chart(ctx, {
                         type: 'pie',
                         data: {
@@ -222,7 +236,8 @@
                 },
                 error: function () {
                     console.log('Lỗi tải biểu đồ Tình trạng Đơn hàng.');
-                    const ctx = document.getElementById('myOrderStatusChart').getContext('d');
+                    // --- SỬA LỖI Ở ĐÂY ---
+                    const ctx = document.getElementById('myOrderStatusChart').getContext('2d');
                     ctx.font = "16px Arial"; ctx.fillStyle = "red"; ctx.textAlign = "center";
                     ctx.fillText("Lỗi: Không thể tải dữ liệu.", ctx.canvas.width / 2, ctx.canvas.height / 2);
                 }
