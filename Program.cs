@@ -62,6 +62,6 @@ app.UseAuthorization();  // <-- SỐ 4: Kích hoạt Phân quyền
 // =======================================
 app.MapControllerRoute( // <-- SỐ 5: PHẢI NẰM CUỐI CÙNG
     name: "default",
-    pattern: "{controller=Admin}/{action=Index}/{id?}");
+    pattern: "{controller=Product}/{action=Index}/{id?}");
 
 app.Run();

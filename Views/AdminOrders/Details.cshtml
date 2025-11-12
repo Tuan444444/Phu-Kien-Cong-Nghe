@@ -4,6 +4,22 @@
     Layout = "_AdminLayout";
 }
 
+<!-- ==================== HIỂN THỊ THÔNG BÁO ==================== -->
+@if (TempData["ToastMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["ToastMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ToastError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ToastError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>@ViewData["Title"]</h1>
     <a asp-action="Index" class="btn btn-outline-secondary">

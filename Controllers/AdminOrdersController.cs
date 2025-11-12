@@ -29,7 +29,7 @@ namespace PhuKienCongNghe.Controllers
             var query = _context.Donhangs.AsQueryable();
 
             // *** SỬA LIST NÀY CHO KHỚP VỚI CSDL CỦA BẠN ***
-            var trangThaiList = new List<string> { "Chờ xác nhận", "Đã xác nhận", "Đang giao", "Hoàn thành", "Đã hủy" };
+            var trangThaiList = new List<string> { "Đang xử lý", "Đang giao", "Hoàn thành", "Đã hủy" };
             ViewBag.TrangThaiList = trangThaiList;
 
             if (!string.IsNullOrEmpty(status) && trangThaiList.Contains(status))
@@ -71,7 +71,7 @@ namespace PhuKienCongNghe.Controllers
 
             // *** SỬA LIST NÀY CHO KHỚP VỚI CSDL CỦA BẠN ***
             ViewBag.TrangThaiOptions = new SelectList(
-                new List<string> { "Chờ xác nhận", "Đã xác nhận", "Đang giao", "Hoàn thành", "Đã hủy" },
+                new List<string> {"Đang xử lý", "Đang giao", "Hoàn thành", "Đã hủy" },
                 donHang.TrangThai
             );
 

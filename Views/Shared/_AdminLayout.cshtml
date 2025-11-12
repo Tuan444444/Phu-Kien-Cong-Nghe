@@ -12,7 +12,7 @@
         body {
             display: flex;
             min-height: 100vh;
-            background-color: #f8f9fa; /* Nền xám nhạt */
+            background-color: #ffffff; /* f8f9faNền xám nhạt */
         }
 
         /* --- Sidebar (Menu bên trái) --- */
@@ -22,7 +22,7 @@
             color: white;
             position: fixed; /* Cố định khi cuộn */
             height: 100%;
-            padding-top: 20px;
+            padding-top: 0px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
@@ -56,12 +56,58 @@
             color: #6c757d; /* Màu tiêu đề (QUẢN LÝ) */
             text-transform: uppercase;
         }
+        /* --- THÊM CSS MỚI CHO NÚT USER MÀU CAM --- */
+        .sidebar-user-section {
+            padding: 20px 0;
+            border-bottom: 1px solid #495057; /* Thêm đường kẻ phân cách */
+            margin-bottom: 15px;
+        }
+
+        .btn-user-admin {
+            background-color: #f28123; /* Màu cam (giống trang user) */
+            color: white !important;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .btn-user-admin:hover, .btn-user-admin:focus {
+                background-color: #e06f14;
+                color: white !important;
+            }
+
+        .sidebar-user-section .dropdown-menu {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border: none;
+            border-radius: .5rem;
+        }
     </style>
+    @RenderSection("Styles", required: false)
 </head>
 <body>
 
     <nav class="admin-sidebar">
-        <h4 class="text-center mb-4">Admin</h4>
+        <div class="sidebar-user-section text-center">
+            <div class="dropdown">
+                <a class="dropdown-toggle btn-user-admin" href="#" id="userDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-fill me-1"></i>
+                    @User.Identity.Name
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink">
+                    <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form asp-controller="Account" asp-action="Logout" method="post" asp-antiforgery="true">
+                            <button type="submit" class="dropdown-item">
+                                <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <ul class="nav flex-column">
 
             <li class="nav-item">
@@ -88,13 +134,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-controller="AdminUser" asp-action="Index">
-                    <i class="bi bi-people me-2"></i> Khách hàng
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="AdminProduct" asp-action="Index">
-                    <i class="bi bi-star me-2"></i> Đăng xuất
+                <a class="nav-link" asp-controller="AdminUsers" asp-action="Index">
+                    <i class="bi bi-people me-2"></i> Người dùng
                 </a>
             </li>
 
@@ -114,9 +155,9 @@
 
     </main>
 
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

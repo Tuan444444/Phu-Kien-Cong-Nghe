@@ -200,7 +200,7 @@ namespace PhuKienCongNghe.Controllers
                         SDTNguoiNhan = model.SoDienThoai,
                         DiaChiNhanHang = $"{model.DiaChiCuThe}, {model.PhuongXa}, {model.QuanHuyen}, {model.TinhThanh}",
                         TongTien = model.TongTien,
-                        TrangThai = "Chờ xử lý"
+                        TrangThai = "Đang xử lý"
                     };
 
                     _context.Donhangs.Add(donHang);
@@ -218,6 +218,8 @@ namespace PhuKienCongNghe.Controllers
                         _context.Chitietdonhangs.Add(chiTiet);
 
                         var sanPham = await _context.Sanphams.FindAsync(item.MaSanPham);
+
+                  
                         if (sanPham != null && sanPham.SoLuongTon >= item.SoLuong)
                         {
                             sanPham.SoLuongTon -= item.SoLuong;
@@ -240,7 +242,7 @@ namespace PhuKienCongNghe.Controllers
                 {
                     await transaction.RollbackAsync();
                     ModelState.AddModelError(string.Empty, $"Lỗi khi đặt hàng: {ex.Message}");
-                    return View("Index", model);
+                    return View("Payment", model);
                 }
             }
         }
