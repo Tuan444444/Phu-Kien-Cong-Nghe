@@ -1,1 +1,242 @@
-﻿
+﻿@model PhuKienCongNghe.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Xác nhận thông tin đặt hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirm-modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kiểm tra lại</button>
+
+                <button type="submit" form="checkout-form" class="btn btn-primary">Xác nhận Đặt Hàng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-5">
+    <form asp-action="ConfirmOrder" method="post" id="checkout-form">
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-7">
+
+                <h4>Thông tin người nhận</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="HoTenNguoiNhan"></label>
+                    <input asp-for="HoTenNguoiNhan" class="form-control" />
+                    <span asp-validation-for="HoTenNguoiNhan" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="SoDienThoai"></label>
+                        <input asp-for="SoDienThoai" class="form-control" />
+                        <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr />
+                <h4>Địa chỉ nhận hàng</h4>
+                <input type="hidden" asp-for="TinhThanh" id="province-name" />
+                <input type="hidden" asp-for="QuanHuyen" id="district-name" />
+                <input type="hidden" asp-for="PhuongXa" id="ward-name" />                   
+                <div class="row" style="display:flex">
+                    <div class="col-md-4 form-group">
+                        <label>Thành phố/Tỉnh</label>
+                        <select class="form-control" id="province-select">
+                            <option value="">Chọn Thành phố/Tỉnh</option>
+                        </select>
+                        <span asp-validation-for="TinhThanh" class="text-danger"></span>
+                    </div>  
+                    <div class="col-md-4 form-group">
+                        <label>Quận/Huyện</label>
+                        <select class="form-control" id="district-select">
+                            <option value="">Chọn Quận/Huyện</option>
+                        </select>
+                        <span asp-validation-for="QuanHuyen" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>Phường/Xã</label>
+                        <select class="form-control" id="ward-select">
+                            <option value="">Chọn Phường/Xã</option>
+                        </select>
+                        <span asp-validation-for="PhuongXa" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DiaChiCuThe">Địa chỉ cụ thể (Số nhà, tên đường)</label>
+                    <input asp-for="DiaChiCuThe" class="form-control" />
+                    <span asp-validation-for="DiaChiCuThe" class="text-danger"></span>
+                </div>
+                <hr />
+
+                <h4>Phương thức thanh toán</h4>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="radio" asp-for="PaymentMethod" value="COD" id="cod" class="form-check-input" checked />
+                        <label for="cod" class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" asp-for="PaymentMethod" value="Online" id="online" class="form-check-input" disabled />
+                        <label for="online" class="form-check-label text-muted">Thanh toán trực tuyến (Tạm khóa)</label>
+                    </div>
+                    <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card" style="position: sticky; top: 80px;">
+                    <div class="card-body">
+                        <h4 class="card-title">Tóm tắt đơn hàng</h4>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <img src="@item.HinhAnh" alt="@item.TenSanPham" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;" />
+                                        @item.TenSanPham (x @item.SoLuong)
+                                    </div>
+                                    <span>@item.ThanhTien.ToString("N0") đ</span>
+                                </li>
+                            }
+                        </ul>
+                        <hr />
+                        <div class="d-flex justify-content-between">
+                            <h5>Tổng cộng</h5>
+                            <h5 class="text-danger">@Model.TongTien.ToString("N0") đ</h5>
+                        </div>
+
+                        <button type="button" id="btn-open-confirm-modal" class="btn btn-primary w-100 mt-3">
+                            XÁC NHẬN THÔNG TIN
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const host = "https://provinces.open-api.vn/api/";
+
+            // Tải Tỉnh/Thành
+            $.get(host + "?depth=1", function (data) {
+                $.each(data, function (index, item) {
+                    $("#province-select").append('<option value="' + item.code + '">' + item.name + '</option>');
+                });
+            });
+
+            // Xử lý khi chọn Tỉnh/Thành
+            $("#province-select").change(function () {
+                var provinceCode = $(this).val();
+                var provinceName = $("#province-select option:selected").text();
+                $("#province-name").val(provinceName); // <-- LƯU TÊN VÀO INPUT ẨN
+
+                if (provinceCode) {
+                    // Tải Quận/Huyện
+                    $.get(host + "p/" + provinceCode + "?depth=2", function (data) {
+                        $("#district-select").html('<option value="">Chọn Quận/Huyện</option>');
+                        $("#ward-select").html('<option value="">Chọn Phường/Xã</option>');
+                        $("#district-name").val("");
+                        $("#ward-name").val("");
+
+                        $.each(data.districts, function (index, item) {
+                            $("#district-select").append('<option value="' + item.code + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Xử lý khi chọn Quận/Huyện
+            $("#district-select").change(function () {
+                var districtCode = $(this).val();
+                var districtName = $("#district-select option:selected").text();
+                $("#district-name").val(districtName); // <-- LƯU TÊN VÀO INPUT ẨN
+
+                if (districtCode) {
+                    // Tải Phường/Xã
+                    $.get(host + "d/" + districtCode + "?depth=2", function (data) {
+                        $("#ward-select").html('<option value="">Chọn Phường/Xã</option>');
+                        $("#ward-name").val("");
+
+                        $.each(data.wards, function (index, item) {
+                            $("#ward-select").append('<option value="' + item.code + '">' + item.name + '</option>');
+                        });
+                    });
+                }
+            });
+
+            // Xử lý khi chọn Phường/Xã
+             $("#ward-select").change(function () {
+                var wardName = $("#ward-select option:selected").text();
+                $("#ward-name").val(wardName); // <-- LƯU TÊN VÀO INPUT ẨN
+             });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#btn-open-confirm-modal').on('click', function () {
+
+                // 1. Đọc dữ liệu từ Form
+                var ten = $('#HoTenNguoiNhan').val();
+                var sdt = $('#SoDienThoai').val();
+                var email = $('#Email').val();
+                var tinh = $('#province-name').val();
+                var huyen = $('#district-name').val();
+                var xa = $('#ward-name').val();
+                var diaChi = $('#DiaChiCuThe').val();
+                var pttt = $('input[name="PaymentMethod"]:checked').val() === "COD" ? "Thanh toán khi nhận hàng" : "Thanh toán trực tuyến";
+                var tongTien = '@Model.TongTien.ToString("N0") đ';
+
+                // 2. Tạo HTML cho nội dung popup
+                var modalContent = `
+                    <h6>Thông tin người nhận:</h6>
+                    <p><strong>Họ tên:</strong> ${ten}<br/>
+                       <strong>SĐT:</strong> ${sdt}<br/>
+                       <strong>Email:</strong> ${email}</p>
+
+                    <h6>Địa chỉ nhận hàng:</h6>
+                    <p>${diaChi}, ${xa}, ${huyen}, ${tinh}</p>
+
+                    <h6>Phương thức thanh toán:</h6>
+                    <p>${pttt}</p>
+
+                    <hr/>
+                    <h5>Tổng tiền: <span class="text-danger">${tongTien}</span></h5>
+                    <small>Vui lòng kiểm tra kỹ thông tin. Bạn không thể thay đổi sau khi xác nhận.</small>
+                `;
+
+                // 3. Đưa HTML vào body của popup
+                $('#confirm-modal-body').html(modalContent);
+
+                // 4. Mở popup
+                // (Giả sử bạn đã cài đặt Bootstrap 5)
+                var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                confirmModal.show();
+            });
+        });
+    </script>
+
+    @{
+        // Thêm phần này để client-side validation hoạt động
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
