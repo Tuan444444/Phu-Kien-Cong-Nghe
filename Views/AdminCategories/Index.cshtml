@@ -1,0 +1,76 @@
+﻿@model IEnumerable<PhuKienCongNghe.Models.Danhmuc>
+@{
+    ViewData["Title"] = "Quản lý Danh mục";
+    Layout = "_AdminLayout";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Thêm danh mục mới</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post" class="row g-3" asp-antiforgery="true">
+
+            <div class="col-md-9">
+                <label for="TenDanhMuc" class="form-label visually-hidden">Tên danh mục</label>
+                <input type="text"
+                       name="TenDanhMuc"
+                       class="form-control"
+                       placeholder="Nhập tên danh mục mới..."
+                       required />
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-brand w-100">
+                    <i class="bi bi-plus-circle"></i> Thêm mới
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Danh sách Danh mục</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Tên Danh mục</th>
+                    <th class="text-end">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@item.TenDanhMuc</td>
+
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end">
+                                <a asp-action="Edit" asp-route-id="@item.MaDanhMuc" class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil"></i> Sửa
+                                </a>
+
+                                <form asp-action="Delete" asp-route-id="@item.MaDanhMuc" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?');" asp-antiforgery="true">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="2" class="text-center text-muted py-3">Chưa có danh mục nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

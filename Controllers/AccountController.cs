@@ -41,65 +41,45 @@ namespace PhuKienCongNghe.Controllers
             {
                 // 1. Tìm user trong CSDL
                 var user = await _context.Nguoidungs
-                                 .FirstOrDefaultAsync(u => u.TenDangNhap == model.TenDangNhap);
+                    .FirstOrDefaultAsync(u => u.TenDangNhap == model.TenDangNhap);
 
-                // 2. Kiểm tra user có tồn tại và Mật khẩu có khớp (dùng BCrypt)
+                // 2. Kiểm tra user có tồn tại và mật khẩu có khớp (dùng BCrypt)
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.MatKhau, user.MatKhau))
                 {
                     // 3. TẠO "VÉ VÀO CỬA" (Claims)
-                    // Đây là các thông tin sẽ được mã hóa và lưu vào Cookie
                     var claims = new List<Claim>
                     {
-                        // Lấy TenDangNhap lưu vào ô "Tên"
                         new Claim(ClaimTypes.Name, user.TenDangNhap),
-                        
-                        // Lấy MaNguoiDung lưu vào ô "ID"
                         new Claim(ClaimTypes.NameIdentifier, user.MaNguoiDung.ToString()),
-                        
-                        // Lấy VaiTro lưu vào ô "Vai trò"
                         new Claim(ClaimTypes.Role, user.VaiTro)
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
-                    {
-                        // Có thể thêm các thuộc tính khác như "IsPersistent" (Ghi nhớ đăng nhập)
-                    };
+                    var authProperties = new AuthenticationProperties();
 
                     // 4. "PHÁT VÉ" CHO TRÌNH DUYỆT
-                    // Dòng này sẽ tạo ra Cookie xác thực
                     await HttpContext.SignInAsync(
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
 
-                    // 5. Tạo thông báo (bạn yêu cầu)
+                    // 5. Tạo thông báo
                     TempData["SuccessMessage"] = "Đăng nhập thành công!";
 
-                    // ... (Ngay sau dòng TempData["SuccessMessage"] = "Đăng nhập thành công!";)
-
-                    // === LOGIC PHÂN QUYỀN MỚI ===
-
-                    // 1. Kiểm tra xem người dùng có đang cố truy cập một trang cụ thể không
-                    // (Ví dụ: họ đang ở /Checkout thì bị bắt đăng nhập)
+                    // 6. Logic phân quyền
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
                     }
 
-                    // 2. Nếu không, chuyển hướng dựa trên vai trò (Role)
-                    // (Chúng ta dùng biến 'user' mà chúng ta đã lấy từ CSDL ở đầu hàm)
                     if (user.VaiTro == "admin")
                     {
-                        // Nếu là "admin", chuyển đến trang Index của AdminController
                         return RedirectToAction("Index", "Admin");
                     }
                     else
                     {
-                        // Nếu là "user" (hoặc vai trò khác), chuyển về trang chủ
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Product");
                     }
-                    // === KẾT THÚC LOGIC MỚI ===
                 }
 
                 // Nếu sai mật khẩu hoặc không tìm thấy user
@@ -140,7 +120,7 @@ namespace PhuKienCongNghe.Controllers
                     return View(model);
                 }
 
-                // Băm mật khẩu (Rất quan trọng)
+                // Băm mật khẩu
                 var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.MatKhau);
 
                 var user = new Nguoidung
@@ -148,16 +128,15 @@ namespace PhuKienCongNghe.Controllers
                     HoTen = model.HoTen,
                     TenDangNhap = model.TenDangNhap,
                     Email = model.Email,
-                    MatKhau = hashedPassword, // Lưu mật khẩu đã băm
+                    MatKhau = hashedPassword,
                     SoDienThoai = model.SoDienThoai,
                     DiaChi = model.DiaChi,
-                    VaiTro = "user" // Mặc định là user
+                    VaiTro = "user"
                 };
 
                 _context.Nguoidungs.Add(user);
                 await _context.SaveChangesAsync();
 
-                // Đăng ký xong, gửi thông báo và bắt người dùng đăng nhập
                 TempData["SuccessMessage"] = "Đăng ký tài khoản thành công! Vui lòng đăng nhập.";
                 return RedirectToAction("Login");
             }
@@ -171,9 +150,8 @@ namespace PhuKienCongNghe.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            // "HỦY VÉ" (Xóa Cookie)
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Product");
         }
     }
 }

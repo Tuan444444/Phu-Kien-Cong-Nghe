@@ -97,7 +97,7 @@ namespace PhuKienCongNghe.Controllers
             }
 
             // Nếu không lấy được trang trước, về trang chủ
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Product");
         }
         // POST: /Cart/UpdateCart
         [HttpPost] // Dùng [HttpPost] vì nó thay đổi dữ liệu

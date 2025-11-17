@@ -1,0 +1,133 @@
+﻿@model PhuKienCongNghe.ViewModels.AdminFeaturedViewModel
+@{
+    ViewData["Title"] = "Quản lý SP Nổi bật & Khuyến mãi";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Quay lại Danh sách
+    </a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Thêm sản phẩm Khuyến mãi</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="AddPromotion" method="post" class="row g-3" asp-antiforgery="true">
+
+            <div class="col-md-5">
+                <label asp-for="NewFeaturedProductId" class="form-label">Chọn Sản phẩm</label>
+                <select asp-for="NewFeaturedProductId" id="product-select" class="form-select" asp-items="Model.ProductsToFeature">
+                    <option value="">-- Chọn sản phẩm để thêm --</option>
+                </select>
+
+                <small id="original-price-display" class="form-text text-muted fw-bold"></small>
+
+                <span asp-validation-for="NewFeaturedProductId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="NewFeaturedPrice" class="form-label">Giá Khuyến Mãi Mới (VNĐ)</label>
+                <input asp-for="NewFeaturedPrice" type="number" class="form-control" placeholder="Ví dụ: 199000" />
+                <span asp-validation-for="NewFeaturedPrice" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-brand w-100">
+                    <i class="bi bi-plus-circle"></i> Thêm
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Danh sách Đang Khuyến mãi</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Giá Gốc</th>
+                    <th>Giá Khuyến Mãi (Mới)</th>
+                    <th>Giảm</th>
+                    <th class="text-end">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FeaturedProducts)
+                {
+                    <tr>
+                        <td class="fw-bold">@item.Sanpham.TenSanPham</td>
+                        <td>@item.Sanpham.Gia.ToString("N0") đ</td>
+
+                        <td class="text-danger fw-bold">@item.GiaKhuyenMai.ToString("N0") đ</td>
+
+                        <td>
+                            @{
+                                var percent = 0.0;
+                                if (item.Sanpham.Gia > 0)
+                                {
+                                    percent = (1 - (item.GiaKhuyenMai / item.Sanpham.Gia)) * 100;
+                                }
+                            }
+                            <span class="badge bg-danger">-@percent.ToString("F0")%</span>
+                        </td>
+
+                        <td class="text-end">
+                            <form asp-action="DeletePromotion" asp-route-id="@item.MaSanPham" method="post" onsubmit="return confirm('Bạn có chắc muốn gỡ sản phẩm này?');" asp-antiforgery="true">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.FeaturedProducts.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-3">Chưa có sản phẩm khuyến mãi nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        var priceJson = ViewData["ProductPriceJson"] as string ?? "[]";
+    }
+    <script>
+        $(document).ready(function() {
+
+            const productPrices = @Html.Raw(priceJson);
+            const priceDisplay = $('#original-price-display');
+
+            $('#product-select').on('change', function() {
+                const selectedId = parseInt($(this).val());
+
+                if (!selectedId) {
+                    priceDisplay.text('');
+                    return;
+                }
+
+                const product = productPrices.find(p => p.MaSanPham === selectedId);
+
+                if (product) {
+                    const formattedPrice = new Intl.NumberFormat('vi-VN').format(product.Gia) + ' đ';
+                    priceDisplay.text('Giá gốc: ' + formattedPrice);
+                } else {
+                    priceDisplay.text('');
+                }
+            });
+        });
+    </script>
+}

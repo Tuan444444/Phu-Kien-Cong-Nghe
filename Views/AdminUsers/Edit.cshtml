@@ -1,0 +1,46 @@
+﻿@model PhuKienCongNghe.Models.Nguoidung
+@{
+    ViewData["Title"] = "Sửa Vai trò Người dùng";
+    Layout = "_AdminLayout";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">@ViewData["Title"]: @Model.HoTen</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post" asp-antiforgery="true">
+
+                    <input type="hidden" asp-for="MaNguoiDung" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Tên đăng nhập</label>
+                        <input asp-for="TenDangNhap" class="form-control" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Họ Tên</label>
+                        <input asp-for="HoTen" class="form-control" readonly />
+                    </div>
+
+                    <hr />
+
+                    <div class="mb-3">
+                        <label asp-for="VaiTro" class="form-label">Vai trò</label>
+                        <select asp-for="VaiTro" class="form-select" asp-items="ViewBag.RoleOptions"></select>
+                    </div>
+
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-brand me-2">Lưu thay đổi</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

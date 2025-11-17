@@ -1,0 +1,89 @@
+﻿@model IEnumerable<PhuKienCongNghe.Models.Nguoidung>
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+    Layout = "_AdminLayout";
+
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentRole = ViewBag.CurrentRole as string;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form asp-action="Index" method="get">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tìm theo Tên, Email, Tên đăng nhập</label>
+                    <input type="text" name="searchString" class="form-control" value="@currentSearch" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Lọc theo Vai trò</label>
+                    <select name="role" class="form-select" asp-items="new SelectList(ViewBag.RoleList, currentRole)">
+                        <option value="">-- Tất cả Vai trò --</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-brand me-2"><i class="bi bi-search"></i> Lọc</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Xóa</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Họ Tên</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Email</th>
+                        <th class="text-center">Vai trò</th>
+                        <th class="text-end">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.HoTen</td>
+                            <td>@item.TenDangNhap</td>
+                            <td>@item.Email</td>
+
+                            <td class="text-center">
+                                @if (item.VaiTro == "Admin")
+                                {
+                                    <span class="badge bg-success">Admin</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.VaiTro</span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <a asp-action="Edit" asp-route-id="@item.MaNguoiDung" class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil"></i> Sửa Vai trò
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.MaNguoiDung" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye"></i> Xem Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Không tìm thấy người dùng nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
