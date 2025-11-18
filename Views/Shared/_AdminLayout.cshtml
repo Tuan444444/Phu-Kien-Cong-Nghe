@@ -12,78 +12,137 @@
         body {
             display: flex;
             min-height: 100vh;
-            background-color: #ffffff; /* f8f9faNền xám nhạt */
-
+            background-color: #f8f9fa;
         }
 
-        /* --- Sidebar (Menu bên trái) --- */
+        /* --- Sidebar (Giữ nguyên) --- */
         .admin-sidebar {
-            width: 260px; /* Độ rộng của Sidebar */
-            background-color: #343a40; /* Màu nền tối */
+            width: 260px;
+            background-color: #343a40;
             color: white;
-            position: fixed; /* Cố định khi cuộn */
+            position: fixed;
             height: 100%;
             padding-top: 0px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
-        /* --- Nội dung chính (Bên phải) --- */
+        /* --- Nội dung chính (Giữ nguyên) --- */
         .admin-content {
-            margin-left: 260px; /* Phải bằng độ rộng sidebar */
+            margin-left: 260px;
             padding: 30px;
-            width: 100%; /* Chiếm hết phần còn lại */
+            width: 100%;
         }
 
-        /* --- Tùy chỉnh link trong Sidebar --- */
+        /* --- Link trong Sidebar (Giữ nguyên) --- */
         .admin-sidebar .nav-link {
-            color: #adb5bd; /* Màu chữ link */
+            color: #adb5bd;
             padding: 12px 20px;
             font-size: 1rem;
         }
 
             .admin-sidebar .nav-link:hover {
                 color: #fff;
-                background-color: #495057; /* Màu khi hover */
+                background-color: #495057;
             }
 
             .admin-sidebar .nav-link.active {
                 color: #fff;
-                background-color: #0d6efd; /* Màu brand (thay bằng màu brand của bạn) */
+                background-color: #0d6efd;
             }
 
         .admin-sidebar .nav-header {
             padding: 0.5rem 1.25rem;
             font-size: 0.85rem;
-            color: #6c757d; /* Màu tiêu đề (QUẢN LÝ) */
+            color: #6c757d;
             text-transform: uppercase;
         }
 
-        /* --- THÊM CSS MỚI CHO NÚT USER MÀU CAM --- */
+        /* --- (SỬA 1) CSS CHO NÚT USER (Vẫn hài hòa) --- */
         .sidebar-user-section {
             padding: 20px 0;
-            border-bottom: 1px solid #495057; /* Thêm đường kẻ phân cách */
+            border-bottom: 1px solid #495057;
             margin-bottom: 15px;
         }
-
+        
         .btn-user-admin {
-            background-color: #f28123; /* Màu cam (giống trang user) */
-            color: white !important;
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-weight: 600;
+            /* Nền trong suốt pha 10% màu trắng -> Tạo màu xám khói rất sang trên nền tối */
+            background-color: rgba(255, 255, 255, 0.05);
+            /* Viền mỏng tinh tế, trùng tông màu nhưng sáng hơn xíu */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e0e0e0 !important; /* Màu chữ trắng xám nhẹ, đỡ chói mắt */
+            /* Bo góc vừa phải */
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+            font-size: 0.95rem;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex; /* Căn giữa icon và chữ */
+            align-items: center;
+            gap: 8px; /* Khoảng cách giữa icon và tên */
+            transition: all 0.2s ease-in-out;
         }
 
-            .btn-user-admin:hover, .btn-user-admin:focus {
-                background-color: #e06f14;
-                color: white !important;
+            /* Hiệu ứng khi di chuột vào */
+            .btn-user-admin:hover,
+            .btn-user-admin:focus,
+            .dropdown-toggle.show { /* Giữ trạng thái sáng khi menu đang mở */
+                background-color: rgba(255, 255, 255, 0.15); /* Sáng hơn một chút */
+                border-color: rgba(255, 255, 255, 0.3); /* Viền sáng hơn */
+                color: #ffffff !important; /* Chữ trắng tinh */
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.05); /* Phát sáng nhẹ */
             }
 
+            /* Chỉnh lại icon bên trong nút cho cân đối */
+            .btn-user-admin i {
+                font-size: 1.1rem;
+                opacity: 0.8; /* Icon mờ hơn chữ 1 chút cho nghệ thuật */
+            }
+
+        /* --- (SỬA 2) CSS CHO CÁC MỤC BÊN TRONG DROPDOWN --- */
         .sidebar-user-section .dropdown-menu {
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
             border: none;
             border-radius: .5rem;
+            padding: 0.5rem; /* Thêm padding cho đẹp */
+        }
+
+        .admin-sidebar .dropdown-item {
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            color: #495057;
+            border-radius: 0.25rem;
+        }
+
+            .admin-sidebar .dropdown-item:active {
+                background-color: #0d6efd; /* Màu xanh khi click */
+                color: #fff;
+            }
+
+        /* Style cho "Hồ sơ" (Dùng màu XANH của admin, thay vì màu cam) */
+        .admin-sidebar .dropdown-item-highlight {
+            background-color: #eef4ff; /* Nền xanh nhạt */
+            color: #0d6efd; /* Chữ xanh đậm */
+            font-weight: 600;
+        }
+
+            .admin-sidebar .dropdown-item-highlight:hover,
+            .admin-sidebar .dropdown-item-highlight:focus {
+                background-color: #dbe8ff; /* Nền đậm hơn khi hover */
+                color: #0a58ca;
+            }
+
+        /* Style cho "Đăng xuất" (Nền đỏ nhạt, chữ đỏ đậm) */
+        .admin-sidebar .dropdown-item-danger {
+            background-color: #fbebee; /* Nền đỏ nhạt */
+            color: #dc3545; /* Chữ đỏ */
+            font-weight: 600;
+        }
+
+            .admin-sidebar .dropdown-item-danger:hover,
+            .admin-sidebar .dropdown-item-danger:focus {
+                background-color: #f8d7da; /* Nền đậm hơn khi hover */
+                color: #b02a37; /* Chữ đậm hơn khi hover */
+            }
         }
     </style>
     @RenderSection("Styles", required: false)
@@ -99,11 +158,11 @@
                     @User.Identity.Name
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink">
-                    <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                  
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <form asp-controller="Account" asp-action="Logout" method="post" asp-antiforgery="true">
-                            <button type="submit" class="dropdown-item">
+                            <button type="submit" class="dropdown-item dropdown-item-danger">
                                 <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
                             </button>
                         </form>
@@ -111,10 +170,10 @@
                 </ul>
             </div>
         </div>
-        <ul class="nav flex-column">
 
+        <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" asp-controller="Admin" asp-action="Index">
+                <a class="nav-link" asp-controller="Admin" asp-action="Index">
                     <i class="bi bi-speedometer2 me-2"></i> Dashboard
                 </a>
             </li>
@@ -137,7 +196,6 @@
                 </a>
             </li>
             <li class="nav-item">
-
                 <a class="nav-link" asp-controller="AdminUsers" asp-action="Index">
                     <i class="bi bi-people me-2"></i> Người dùng
                 </a>
@@ -155,14 +213,61 @@
 
     <main class="admin-content">
 
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         @RenderBody()
 
     </main>
 
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            var currentPath = window.location.pathname; // Lấy URL hiện tại
+            var bestMatch = null;
+            var bestMatchLength = 0;
+
+            // 1. Lặp qua tất cả các link trong sidebar
+            $('.admin-sidebar .nav-link').each(function () {
+                var $this = $(this);
+                var linkHref = $this.attr('href');
+
+                if (linkHref) {
+                    // 2. So sánh: Tìm link nào "khớp" với URL nhất
+                    if (currentPath.toLowerCase().startsWith(linkHref.toLowerCase())) {
+                        if (linkHref.length > bestMatchLength) {
+                            bestMatchLength = linkHref.length;
+                            bestMatch = $this;
+                        }
+                    }
+                }
+            });
+
+            // 3. Xóa "active" cũ và thêm "active" (màu xanh) cho link tốt nhất
+            $('.admin-sidebar .nav-link').removeClass('active');
+            if (bestMatch) {
+                bestMatch.addClass('active');
+            } else if (currentPath === "/Admin" || currentPath.startsWith("/Admin/Index") || currentPath === "/Admin/") {
+                // Trường hợp đặc biệt cho Dashboard
+                $('.admin-sidebar .nav-link[asp-controller="Admin"][asp-action="Index"]').addClass('active');
+            }
+        });
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -64,7 +64,7 @@ namespace PhuKienCongNghe.Controllers
                 var labels = new List<string>();
                 var data = new List<double>();
 
-                for (int i = 6; i >= 0; i--)
+                for (int i = 29; i >= 0; i--)
                 {
                     var ngay = homNay.AddDays(-i);
                     var doanhThuNgay = await _context.Donhangs

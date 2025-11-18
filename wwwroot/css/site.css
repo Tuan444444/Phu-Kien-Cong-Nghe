@@ -449,3 +449,11 @@ body {
         margin: 6px 0;
         border-top: 1px solid #ddd;
     }
+/* Thêm khoảng cách ở trên cho các tiêu đề chính của trang */
+.section-title-spacing {
+    /* Bạn có thể thay đổi 40px thành 2rem hoặc 3rem 
+      tùy theo bạn muốn nó cách xa bao nhiêu.
+    */
+    margin-top: 40px;
+}
+
