@@ -1,4 +1,3 @@
-
 @using Microsoft.AspNetCore.Http
 @using System.Security.Claims
 @inject IHttpContextAccessor HttpContextAccessor
@@ -88,4 +87,7 @@
             </div>
         </div>
     </nav>
+
+    @await Component.InvokeAsync("CategoryMenu")
+
 </header>

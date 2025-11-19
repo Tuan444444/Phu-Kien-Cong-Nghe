@@ -1,48 +1,61 @@
 ﻿@model PhuKienCongNghe.ViewModels.ShopViewModel
+
 @using X.PagedList
 @using X.PagedList.Mvc.Core
 
-
 @{
-    ViewData["Title"] = "Cửa hàng";
+    // Nếu ViewData["Title"] được set từ Controller (Category/Search), thì dùng nó.
+    // Nếu không, thì mặc định là "Cửa hàng" (trang Index).
+    ViewData["Title"] = ViewData["Title"] ?? "Cửa hàng"; 
     Layout = "_Layout";
+
+    // Lấy thông tin action hiện tại từ Controller để quyết định ẩn/hiện "Sản phẩm nổi bật"
+    var currentAction = ViewData["CurrentAction"]?.ToString();
+    var isHomePage = currentAction == "Index";
 }
 
-<section class="featured spad">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    <h2 class="text-center mb-4 section-title-spacing">Sản phẩm nổi bật</h2>
+@* ==========================================
+   PHẦN SẢN PHẨM NỔI BẬT
+   Chỉ hiển thị khi đang ở trang chủ (Action "Index") và có sản phẩm nổi bật
+   ========================================== *@
+@if (isHomePage && Model.FeaturedProducts != null && Model.FeaturedProducts.Any())
+{
+    <section class="featured spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2 class="text-center mb-4 section-title-spacing">Sản phẩm nổi bật</h2>
+                    </div>
                 </div>
             </div>
+            <div class="row featured__filter">
+                @foreach (var featuredEntry in Model.FeaturedProducts)
+                {
+                    <partial name="_FeaturedProductCard" model="featuredEntry" />
+                }
+            </div>
         </div>
-        <div class="row featured__filter">
+    </section>
+    <hr class="my-5" />
+}
 
-            @foreach (var featuredEntry in Model.FeaturedProducts)
-            {
-                // Gọi Partial View (Card) của Trang chủ
-                <partial name="_FeaturedProductCard" model="featuredEntry" />
-            }
-
-            @if (!Model.FeaturedProducts.Any())
-            {
-                <div class="col-12">
-                    <p class="text-center text-muted">Chưa có sản phẩm khuyến mãi nào.</p>
-                </div>
-            }
-        </div>
-    </div>
-</section>
-<hr class="my-5" />
 
 <div class="container my-5">
-    <h2 class="text-center mb-4">Tất cả sản phẩm</h2>
+    @* ==========================================
+       TIÊU ĐỀ TRANG (Tự động đổi theo danh mục/tìm kiếm)
+       ========================================== *@
+    <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
+
+    @* ==========================================
+       HIỂN THỊ DANH SÁCH SẢN PHẨM HOẶC THÔNG BÁO RỖNG
+       ========================================== *@
     @if (!Model.AllProducts.Any())
     {
         <div class="text-center p-5">
             <p class="fs-4 text-muted">Không tìm thấy sản phẩm nào phù hợp.</p>
+            <a asp-action="Index" class="btn btn-primary mt-3">Xem tất cả sản phẩm</a>
         </div>
     }
     else
@@ -51,34 +64,25 @@
             @foreach (var item in Model.AllProducts)
             {
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card h-100 product-card">
-
-                        <a asp-action="Details" asp-controller="Product" asp-route-id="@item.MaSanPham">
-                            <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "https://via.placeholder.com/300x300.png?text=No+Image" : item.HinhAnh)"
-                                 class="card-img-top p-3" alt="@item.TenSanPham">
+                    <div class="card h-100 product-card shadow-sm border-0">
+                        <a asp-action="Details" asp-controller="Product" asp-route-id="@item.MaSanPham" class="d-block text-center pt-3 overflow-hidden">
+                            <img src="@(string.IsNullOrEmpty(item.HinhAnh) ? "/images/placeholder.png" : item.HinhAnh)"
+                                 class="card-img-top" style="height: 200px; object-fit: contain;" alt="@item.TenSanPham">
                         </a>
-
                         <div class="card-body p-3 d-flex flex-column">
-                            <h5 class="card-title">
-                                <a asp-action="Details" asp-controller="Product" asp-route-id="@item.MaSanPham" class="text-decoration-none text-dark">
+                            <h5 class="card-title" style="height: 40px; overflow: hidden;">
+                                <a asp-action="Details" asp-controller="Product" asp-route-id="@item.MaSanPham" class="text-decoration-none text-dark fw-bold fs-6">
                                     @item.TenSanPham
                                 </a>
                             </h5>
-
-                            <div class="product-price mb-2 mt-auto">
-                                <span class="fw-bold text-danger fs-5">@item.Gia.ToString("N0") đ</span>
+                            <div class="product-price mb-3 mt-auto">
+                                <span class="fw-bold text-danger fs-5">@item.Gia.ToString("N0") ₫</span>
                             </div>
-
-                            <div class="mt-2">
-                                <a class="btn btn-sm btn-brand"
-                                   asp-controller="Product"
-                                   asp-action="Details"
-                                   asp-route-id="@item.MaSanPham">Xem chi tiết</a>
-
-                                <a class="btn btn-sm btn-outline-secondary"
-                                   asp-controller="Cart"
-                                   asp-action="AddToCart"
-                                   asp-route-id="@item.MaSanPham">Thêm vào giỏ</a>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                                <a class="btn btn-sm btn-outline-secondary flex-grow-1" asp-action="Details" asp-route-id="@item.MaSanPham">Chi tiết</a>
+                                <a class="btn btn-sm btn-primary flex-grow-1" asp-controller="Cart" asp-action="AddToCart" asp-route-id="@item.MaSanPham">
+                                    <i class="bi bi-cart-plus"></i> Thêm
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -86,25 +90,43 @@
             }
         </div>
 
-        <div class="row">
+        @* ==========================================
+           PHẦN PHÂN TRANG (PAGINATION) - ĐÃ SỬA LỖI QUAN TRỌNG
+           ========================================== *@
+        <div class="row mt-4">
             <div class="col-12 d-flex justify-content-center">
-
-                @Html.PagedListPager(Model.AllProducts, page => Url.Action("Index", new { page = page }),
-
-                new PagedListRenderOptions
-                {
-                    UlElementClasses = new[] { "pagination" },
-                    LiElementClasses = new[] { "page-item" },
-                    PageClasses = new[] { "page-link" },
-                    ActiveLiElementClass = "active",
-                    DisplayLinkToNextPage = PagedListDisplayMode.Always,
-                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
-                    LinkToNextPageFormat = "Sau",
-                    LinkToPreviousPageFormat = "Trước"
-                }
-                        )
-
+                @Html.PagedListPager(Model.AllProducts, page => Url.Action(
+                    // LỖI ĐÃ SỬA: Lấy Action động từ ViewData["CurrentAction"]
+                    ViewData["CurrentAction"]?.ToString() ?? "Index", 
+                    new { 
+                        page = page, 
+                        id = ViewData["CategoryId"], // GIỮ LẠI ID DANH MỤC
+                        query = ViewData["Query"]    // GIỮ LẠI TỪ KHÓA TÌM KIẾM
+                    }),
+                    new PagedListRenderOptions
+                    {
+                        UlElementClasses = new[] { "pagination" },
+                        LiElementClasses = new[] { "page-item" },
+                        PageClasses = new[] { "page-link" },
+                        ActiveLiElementClass = "active",
+                        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                        LinkToNextPageFormat = "Sau",
+                        LinkToPreviousPageFormat = "Trước"
+                    }
+                )
+            </div>
         </div>
-    </div>
-        }
+    }
 </div>
+
+@section Styles {
+    <style>
+        .product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+        .pagination .active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; }
+        .page-link { color: #333; }
+        /* Đảm bảo khoảng cách cho tiêu đề */
+        .section-title-spacing { margin-bottom: 2rem; }
+    </style>
+}
