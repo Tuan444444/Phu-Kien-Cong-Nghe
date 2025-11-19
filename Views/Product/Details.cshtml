@@ -1,5 +1,5 @@
 </div>
-
+<form>
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-brand btn-lg">
                         <i class="bi bi-cart-plus-fill"></i>
@@ -72,3 +72,15 @@
                                    asp-controller="Product"
                                    asp-action="Details"
                                    asp-route-id="@item.MaSanPham">Xem chi tiết</a>
+                            <a class="btn btn-sm btn-outline-secondary"
+                               asp-controller="Cart"
+                               asp-action="AddToCart"
+                               asp-route-id="@item.MaSanPham">Thêm vào giỏ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+    }
