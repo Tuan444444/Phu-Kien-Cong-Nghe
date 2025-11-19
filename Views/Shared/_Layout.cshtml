@@ -9,39 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-    <style>
-        :root {
-            --shopee-orange: #ff6600;
-            --shopee-orange-dark: #e65c00;
-            --shopee-orange-light: #fff4eb;
-        }
-
-        /* Toast chỉnh theo tone cam */
-        .toast-container .toast {
-            border-radius: 10px;
-            border: 1px solid var(--shopee-orange);
-            overflow: hidden;
-        }
-
-        .toast-header.bg-success {
-            background-color: var(--shopee-orange) !important;
-        }
-
-        .toast-header .btn-close-white {
-            filter: brightness(0) invert(1);
-        }
-
-        /* Body margin fix nếu header sticky */
-        body {
-            padding-top: 0;
-        }
-
-        main {
-            min-height: 65vh;
-        }
-    </style>
-
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 

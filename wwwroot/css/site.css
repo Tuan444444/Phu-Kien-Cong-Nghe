@@ -527,3 +527,59 @@ body {
         margin: 6px 0;
         border-top: 1px solid #ddd;
     }
+/* Thêm khoảng cách ở trên cho các tiêu đề chính của trang */
+.section-title-spacing {
+    /* Bạn có thể thay đổi 40px thành 2rem hoặc 3rem 
+      tùy theo bạn muốn nó cách xa bao nhiêu.
+    */
+    margin-top: 40px;
+}
+
+/* ==================================================
+   STYLE THANH DANH MỤC (ĐỒNG NHẤT)
+   ================================================== */
+.shopee-category-bar {
+    background-color: #fff; /* Nền trắng sạch sẽ */
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
+}
+
+.category-horizontal-list {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+    .category-horizontal-list::-webkit-scrollbar {
+        display: none;
+    }
+
+/* Style chung cho TẤT CẢ các nút (kể cả nút đầu tiên) */
+.cat-item {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f5f5f5; /* Nền xám nhẹ mặc định */
+    color: #555;
+    padding: 8px 20px;
+    margin-right: 10px;
+    border-radius: 50px; /* Bo tròn viên thuốc */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+    .cat-item:hover {
+        background-color: #eef4ff; /* Hover màu xanh nhạt */
+        color: #0d6efd;
+    }
+
+    /* Trạng thái đang chọn (Active) - Màu cam cho nổi */
+    .cat-item.active {
+        background-color: #ee4d2d; /* Màu cam */
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(238, 77, 45, 0.3);
+    }
