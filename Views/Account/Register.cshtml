@@ -3,8 +3,60 @@
     ViewData["Title"] = "Đăng ký";
 }
 
-<div class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(135deg, #fffaf6, #fff4ee);">
-    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 16px;">
+<style>
+    :root {
+        --shopee-orange: #ff6600;
+        --shopee-orange-dark: #e65c00;
+        --shopee-orange-light: #fff7f2;
+    }
+
+    .text-orange {
+        color: var(--shopee-orange) !important;
+    }
+
+    .form-control:focus {
+        border-color: var(--shopee-orange) !important;
+        box-shadow: 0 0 0 0.15rem rgba(255, 102, 0, 0.25);
+    }
+
+    .btn-orange {
+        background-color: var(--shopee-orange) !important;
+        border-color: var(--shopee-orange) !important;
+        color: white !important;
+        transition: 0.2s;
+    }
+
+        .btn-orange:hover {
+            background-color: var(--shopee-orange-dark) !important;
+            border-color: var(--shopee-orange-dark) !important;
+        }
+
+    .link-orange {
+        color: var(--shopee-orange) !important;
+        font-weight: 500;
+    }
+
+        .link-orange:hover {
+            color: var(--shopee-orange-dark) !important;
+        }
+
+    .register-wrapper {
+        background: linear-gradient(135deg, #fffaf6, #fff4ee);
+    }
+
+    .card {
+        border-radius: 16px;
+        border: 1px solid #ffe0cc;
+    }
+
+    .form-label {
+        color: #333;
+        font-weight: 600;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100 register-wrapper">
+    <div class="card shadow-lg p-4" style="width: 420px;">
         <div class="text-center mb-3">
             <h4 class="fw-bold text-orange">
                 <i class="bi bi-person-plus-fill"></i> Đăng ký tài khoản
@@ -15,49 +67,51 @@
             <div asp-validation-summary="All" class="text-danger mb-2"></div>
 
             <div class="mb-3">
-                <label asp-for="HoTen" class="form-label fw-semibold"></label>
+                <label asp-for="HoTen" class="form-label"></label>
                 <input asp-for="HoTen" class="form-control" placeholder="Họ và tên" />
             </div>
 
             <div class="mb-3">
-                <label asp-for="TenDangNhap" class="form-label fw-semibold"></label>
+                <label asp-for="TenDangNhap" class="form-label"></label>
                 <input asp-for="TenDangNhap" class="form-control" placeholder="Tên đăng nhập" />
                 <span asp-validation-for="TenDangNhap" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Email" class="form-label fw-semibold"></label>
+                <label asp-for="Email" class="form-label"></label>
                 <input asp-for="Email" class="form-control" placeholder="Email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="MatKhau" class="form-label fw-semibold"></label>
+                <label asp-for="MatKhau" class="form-label"></label>
                 <input asp-for="MatKhau" type="password" class="form-control" placeholder="Mật khẩu (ít nhất 6 ký tự)" />
                 <span asp-validation-for="MatKhau" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="XacNhanMatKhau" class="form-label fw-semibold"></label>
+                <label asp-for="XacNhanMatKhau" class="form-label"></label>
                 <input asp-for="XacNhanMatKhau" type="password" class="form-control" placeholder="Nhập lại mật khẩu" />
                 <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="SoDienThoai" class="form-label fw-semibold"></label>
+                <label asp-for="SoDienThoai" class="form-label"></label>
                 <input asp-for="SoDienThoai" class="form-control" placeholder="Số điện thoại (không bắt buộc)" />
             </div>
 
             <div class="mb-3">
-                <label asp-for="DiaChi" class="form-label fw-semibold"></label>
+                <label asp-for="DiaChi" class="form-label"></label>
                 <input asp-for="DiaChi" class="form-control" placeholder="Địa chỉ (không bắt buộc)" />
             </div>
 
-            <button type="submit" class="btn w-100 text-white fw-semibold" style="background-color: #ff6600;">Đăng ký</button>
+            <button type="submit" class="btn btn-orange w-100 fw-semibold">
+                Đăng ký
+            </button>
 
             <div class="text-center mt-3">
                 <span>Đã có tài khoản? </span>
-                <a asp-action="Login" class="text-decoration-none" style="color:#ff6600;">Đăng nhập</a>
+                <a asp-action="Login" class="text-decoration-none link-orange">Đăng nhập</a>
             </div>
         </form>
     </div>

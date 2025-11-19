@@ -1,4 +1,4 @@
-﻿@model PhuKienCongNghe.ViewModels.ShopViewModel
+@model PhuKienCongNghe.ViewModels.ShopViewModel
 
 @using X.PagedList
 @using X.PagedList.Mvc.Core
@@ -70,7 +70,7 @@
                                  class="card-img-top" style="height: 200px; object-fit: contain;" alt="@item.TenSanPham">
                         </a>
                         <div class="card-body p-3 d-flex flex-column">
-                            <h5 class="card-title" style="height: 40px; overflow: hidden;">
+<h5 class="card-title" style="height: 40px; overflow: hidden;">
                                 <a asp-action="Details" asp-controller="Product" asp-route-id="@item.MaSanPham" class="text-decoration-none text-dark fw-bold fs-6">
                                     @item.TenSanPham
                                 </a>
@@ -124,7 +124,7 @@
     <style>
         .product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-        .pagination .active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; }
+.pagination .active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: white; }
         .page-link { color: #333; }
         /* Đảm bảo khoảng cách cho tiêu đề */
         .section-title-spacing { margin-bottom: 2rem; }

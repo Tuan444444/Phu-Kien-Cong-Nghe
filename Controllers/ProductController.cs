@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuKienCongNghe.Data;
 using PhuKienCongNghe.Models;
@@ -79,7 +79,7 @@ namespace PhuKienCongNghe.Controllers
         // ==========================================
         public async Task<IActionResult> Category(int id, int? page)
         {
-            ViewData["CurrentAction"] = "Category"; // Quan trọng: Để phân trang biết đường dẫn
+ViewData["CurrentAction"] = "Category"; // Quan trọng: Để phân trang biết đường dẫn
             ViewData["CategoryId"] = id;            // Quan trọng: Để giữ ID danh mục khi sang trang 2
             ViewData["Query"] = null;
 
@@ -147,8 +147,7 @@ namespace PhuKienCongNghe.Controllers
 
             return View("Index", viewModel);
         }
-
-        // ==========================================
+// ==========================================
         // 4. CHI TIẾT SẢN PHẨM
         // ==========================================
         public async Task<IActionResult> Details(int? id)
