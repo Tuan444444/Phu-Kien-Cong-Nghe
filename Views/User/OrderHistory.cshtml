@@ -3,14 +3,72 @@
     ViewData["Title"] = "Lịch sử mua hàng";
 }
 
+<style>
+    :root {
+        --shopee-orange: #ff6600;
+        --shopee-orange-light: #fff4eb;
+        --shopee-orange-dark: #e65c00;
+    }
+
+    .order-empty-box {
+        border: 2px dashed #ffcc99;
+        border-radius: 12px;
+        background-color: var(--shopee-orange-light);
+    }
+
+    .accordion-item {
+        border-radius: 10px !important;
+        overflow: hidden;
+        border: 1px solid #ffe0cc;
+        transition: 0.25s;
+    }
+
+        .accordion-item:hover {
+            border-color: var(--shopee-orange);
+            box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+        }
+
+    .accordion-button:not(.collapsed) {
+        background-color: var(--shopee-orange-light);
+        color: var(--shopee-orange);
+        font-weight: 600;
+    }
+
+    .badge-order {
+        background-color: var(--shopee-orange) !important;
+    }
+
+    .btn-orange {
+        background-color: var(--shopee-orange) !important;
+        border: none;
+        color: #fff !important;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+        .btn-orange:hover {
+            background-color: var(--shopee-orange-dark) !important;
+        }
+
+    table thead {
+        background-color: #fff6ef;
+    }
+
+    table tbody tr:hover {
+        background-color: #fff8f2;
+    }
+
+</style>
+
+
 <div class="container my-5">
-    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+    <h2 class="mb-4 text-center" style="color: var(--shopee-orange);">@ViewData["Title"]</h2>
 
     @if (!Model.Any())
     {
-        <div class="text-center p-5 border rounded">
+        <div class="text-center p-5 order-empty-box">
             <p class="fs-4 text-muted">Bạn chưa có đơn hàng nào.</p>
-            <a asp-controller="Product" asp-action="Index" class="btn btn-primary" style="background-color: #ff6600; border:none;">Bắt đầu mua sắm</a>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-orange">Bắt đầu mua sắm</a>
         </div>
     }
     else
@@ -20,18 +78,43 @@
             {
                 <div class="accordion-item mb-3 shadow-sm">
                     <h2 class="accordion-header" id="heading-@order.MaDonHang">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@order.MaDonHang" aria-expanded="false" aria-controls="collapse-@order.MaDonHang">
+
+                        <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse-@order.MaDonHang"
+                                aria-expanded="false"
+                                aria-controls="collapse-@order.MaDonHang">
+
                             <div class="d-flex justify-content-between w-100 me-3">
-                                <span><strong>Đơn hàng:</strong> #@order.MaDonHang</span>
+                                <span><strong>Mã đơn:</strong> #@order.MaDonHang</span>
                                 <span><strong>Ngày đặt:</strong> @order.NgayDat?.ToString("dd/MM/yyyy")</span>
-                                <span><strong>Trạng thái:</strong> <span class="badge bg-success">@order.TrangThai</span></span>
-                                <span><strong>Tổng tiền:</strong> <span class="fw-bold text-danger">@order.TongTien.ToString("N0") đ</span></span>
+
+                                <span>
+                                    <strong>Trạng thái:</strong>
+                                    <span class="badge badge-order">
+                                        @order.TrangThai
+                                    </span>
+                                </span>
+
+                                <span>
+                                    <strong>Tổng tiền:</strong>
+                                    <span class="fw-bold" style="color: var(--shopee-orange);">
+                                        @order.TongTien.ToString("N0") đ
+                                    </span>
+                                </span>
                             </div>
+
                         </button>
                     </h2>
-                    <div id="collapse-@order.MaDonHang" class="accordion-collapse collapse" aria-labelledby="heading-@order.MaDonHang" data-bs-parent="#orderAccordion">
+
+                    <div id="collapse-@order.MaDonHang"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="heading-@order.MaDonHang"
+                         data-bs-parent="#orderAccordion">
+
                         <div class="accordion-body">
-                            <h6 class="fw-bold">Chi tiết đơn hàng:</h6>
+                            <h6 class="fw-bold mb-3">Chi tiết đơn hàng:</h6>
+
                             <table class="table table-borderless table-hover align-middle">
                                 <thead>
                                     <tr>
@@ -41,25 +124,38 @@
                                         <th>Thành tiền</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     @foreach (var item in order.Chitietdonhangs)
                                     {
                                         <tr>
                                             <td style="width: 80px;">
-                                                <img src="@(string.IsNullOrEmpty(item.MaSanPhamNavigation.HinhAnh) ? "https://via.placeholder.com/100" : item.MaSanPhamNavigation.HinhAnh)" class="img-fluid rounded" style="width: 60px; height: 60px; object-fit: cover;" alt="@item.MaSanPhamNavigation.TenSanPham" />
+                                                <img src="@(string.IsNullOrEmpty(item.MaSanPhamNavigation.HinhAnh)
+                                                    ? "https://via.placeholder.com/100"
+                                                    : item.MaSanPhamNavigation.HinhAnh)"
+                                                     class="img-fluid rounded"
+                                                     style="width: 60px; height: 60px; object-fit: cover;" />
                                             </td>
+
                                             <td>
-                                                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.MaSanPham" class="text-decoration-none text-dark">
+                                                <a asp-controller="Product"
+                                                   asp-action="Details"
+                                                   asp-route-id="@item.MaSanPham"
+                                                   class="text-decoration-none text-dark">
                                                     @item.MaSanPhamNavigation.TenSanPham
                                                 </a>
                                             </td>
+
                                             <td>@item.DonGia.ToString("N0") đ</td>
                                             <td>x @item.SoLuong</td>
-                                            <td>@((item.DonGia * item.SoLuong).ToString("N0")) đ</td>
+                                            <td>
+                                                @((item.DonGia * item.SoLuong).ToString("N0")) đ
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>

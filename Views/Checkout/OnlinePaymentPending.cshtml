@@ -1,12 +1,77 @@
 ﻿@{
+    // Tiêu đề trang
     ViewData["Title"] = "Thanh toán trực tuyến";
 }
+
+<style>
+    /* ==============================
+           KHAI BÁO MÀU SHOPEE
+        =============================== */
+    :root {
+        --shopee-orange: #ff6600;
+        --shopee-orange-dark: #e65c00;
+        --shopee-orange-light: #fff7f2;
+    }
+
+    /* Tiêu đề */
+    h2 {
+        color: var(--shopee-orange);
+        font-weight: 700;
+    }
+
+    /* Nút Shopee */
+    .btn-back {
+        background-color: var(--shopee-orange);
+        border-color: var(--shopee-orange);
+        color: white;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+        .btn-back:hover {
+            background-color: var(--shopee-orange-dark);
+            border-color: var(--shopee-orange-dark);
+        }
+
+    /* Khung thông báo */
+    .payment-box {
+        border-radius: 12px;
+        background: var(--shopee-orange-light);
+        border: 1px solid #ffdbca;
+        padding: 2rem;
+    }
+
+    strong {
+        color: var(--shopee-orange);
+    }
+</style>
+
+
 <div class="container text-center mt-5">
-    <h2>Chức năng đang phát triển</h2>
-    <p>
-        Bạn đã chọn thanh toán trực tuyến cho đơn hàng trị giá:
-        <strong>@TempData["PaymentAmount"]?.ToString() đ</strong>
-    </p>
-    <p>Hiện tại, chức năng này đang được tích hợp. Vui lòng quay lại và chọn COD.</p>
-    <a asp-action="Payment" asp-controller="Checkout" class="btn btn-secondary">Quay lại</a>
+
+    <!-- Khung nền Shopee -->
+    <div class="payment-box mx-auto" style="max-width: 600px">
+
+        <!-- Tiêu đề -->
+        <h2>
+            <i class="bi bi-credit-card-fill"></i> Thanh toán trực tuyến
+        </h2>
+
+        <p class="mt-3">
+            Bạn đã chọn phương thức thanh toán online cho đơn hàng trị giá:
+            <br />
+            <strong>@TempData["PaymentAmount"]?.ToString() đ</strong>
+        </p>
+
+        <p class="mt-2">
+            Hiện tại hệ thống đang hoàn thiện tích hợp thanh toán.
+            <br />
+            Vui lòng quay lại và chọn <strong>Thanh toán khi nhận hàng (COD)</strong>.
+        </p>
+
+        <!-- Nút quay lại -->
+        <a asp-action="Payment" asp-controller="Checkout" class="btn btn-back mt-3">
+            <i class="bi bi-arrow-left"></i> Quay lại phương thức thanh toán
+        </a>
+    </div>
 </div>

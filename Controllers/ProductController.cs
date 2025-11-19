@@ -69,6 +69,8 @@ namespace PhuKienCongNghe.Controllers
             return View(viewModel);
         }
 
+
+
         // GET: /Products/Details/5
         // Action này để xem chi tiết sản phẩm (sẽ cần cho các bước sau)
         public async Task<IActionResult> Details(int? id)
@@ -118,29 +120,39 @@ namespace PhuKienCongNghe.Controllers
             // Gửi 1 đối tượng "sanpham" duy nhất này đến View
             return View(sanpham);
         }
-        public async Task<IActionResult> Category(int id, int? page) // Giữ "async Task" (vì có FindAsync)
+        // Trong ProductController.cs
+        // ...
+        // Sửa lỗi NullReferenceException khi truy cập MaDanhMucNavigation
+        public IActionResult Category(int id, int? page)
         {
-            ViewData["CategoryId"] = id;
-
-            var category = await _context.Danhmucs.FindAsync(id); // Giữ await này
-            ViewData["Title"] = (category != null) ? category.TenDanhMuc : "Sản phẩm";
-
             int pageSize = 12;
             int pageNumber = (page ?? 1);
 
-            // Bỏ "await", đổi sang .ToPagedList()
-            var products = _context.Sanphams
-                                   .Include(s => s.MaDanhMucNavigation)
-                                   .Where(s => s.MaDanhMuc == id)
-                                   .OrderByDescending(s => s.MaSanPham)
-                                   .ToPagedList(pageNumber, pageSize); // <-- SỬA Ở ĐÂY
+            var productsQuery = _context.Sanphams
+                                        .Include(s => s.MaDanhMucNavigation) // <-- THÊM DÒNG NÀY
+                                        .Where(s => s.MaDanhMuc == id)
+                                        .OrderByDescending(s => s.MaSanPham)
+                                        .AsQueryable(); // Chuyển thành IQueryable
 
+            var products = productsQuery.ToPagedList(pageNumber, pageSize);
+
+            // Lấy Tên danh mục. Phải kiểm tra tồn tại và truy vấn lại Danh mục nếu products không có phần tử
+            if (products.Any())
+            {
+                ViewData["Title"] = products.First().MaDanhMucNavigation.TenDanhMuc;
+            }
+            else
+            {
+                // Nếu danh sách sản phẩm trống, ta truy vấn riêng để lấy tên Danh mục
+                var category = _context.Danhmucs.FirstOrDefault(d => d.MaDanhMuc == id);
+                ViewData["Title"] = category != null ? category.TenDanhMuc : "Danh mục không tồn tại";
+            }
+
+            ViewData["CategoryId"] = id;
+
+            // QUAN TRỌNG: Dùng View "Index" (vì nó có PagedList và cấu trúc giao diện chung)
             return View("Index", products);
         }
-
-        //
-        // --- SỬA 3: ACTION SEARCH ---
-        //
         public IActionResult Search(string query, int? page) // Bỏ "async Task"
         {
             ViewData["Query"] = query;

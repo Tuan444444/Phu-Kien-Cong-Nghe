@@ -1,7 +1,56 @@
+<style>
+    :root {
+        --shopee-orange: #ff6600;
+        --shopee-orange-light: #fff4eb;
+        --shopee-orange-dark: #e65c00;
+    }
+
+    .footer-clean {
+        background: var(--shopee-orange-light);
+        padding: 40px 0;
+        border-top: 3px solid var(--shopee-orange);
+    }
+
+        .footer-clean h5,
+        .footer-clean h6 {
+            color: var(--shopee-orange);
+        }
+
+        .footer-clean a:hover {
+            color: var(--shopee-orange-dark) !important;
+        }
+
+        .footer-clean .bi {
+            transition: 0.2s;
+        }
+
+            .footer-clean .bi:hover {
+                color: var(--shopee-orange) !important;
+                transform: translateY(-2px);
+            }
+
+        .footer-clean .text-orange {
+            color: var(--shopee-orange) !important;
+        }
+
+        .footer-clean p,
+        .footer-clean li,
+        .footer-clean a {
+            font-size: 14px;
+        }
+
+        .footer-clean .footer-copyright {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #888;
+        }
+</style>
 
 <footer class="footer-clean border-top">
     <div class="container">
         <div class="row">
+
+            <!-- Cột 1 -->
             <div class="col-md-4 mb-3">
                 <h5 class="fw-bold text-orange">PhuKienCongNghe</h5>
                 <p class="text-muted small">
@@ -15,6 +64,7 @@
                 </p>
             </div>
 
+            <!-- Cột 2 -->
             <div class="col-md-2 offset-md-1 mb-3">
                 <h6 class="fw-bold">Sản phẩm</h6>
                 <ul class="list-unstyled">
@@ -25,6 +75,7 @@
                 </ul>
             </div>
 
+            <!-- Cột 3 -->
             <div class="col-md-2 mb-3">
                 <h6 class="fw-bold">Hỗ trợ</h6>
                 <ul class="list-unstyled">
@@ -34,6 +85,7 @@
                 </ul>
             </div>
 
+            <!-- Cột 4 -->
             <div class="col-md-3 mb-3">
                 <h6 class="fw-bold">Kết nối với chúng tôi</h6>
                 <div>
@@ -44,6 +96,7 @@
             </div>
         </div>
 
+        <!-- Dòng cuối -->
         <div class="row">
             <div class="col-lg-12 text-center">
                 <p class="footer-copyright">
@@ -51,6 +104,5 @@
                 </p>
             </div>
         </div>
-
     </div>
 </footer>

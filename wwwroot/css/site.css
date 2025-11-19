@@ -1,5 +1,83 @@
-﻿html {
-  font-size: 14px;
+﻿<style >
+:root {
+    --shopee-orange: #ff6600;
+    --shopee-orange-dark: #e65c00;
+    --shopee-orange-light: #fff4ec;
+}
+
+/* BUTTONS */
+.btn-primary,
+.btn-success,
+.btn-warning,
+.btn-lg {
+    background-color: var(--shopee-orange) !important;
+    border-color: var(--shopee-orange) !important;
+}
+
+    .btn-primary:hover,
+    .btn-success:hover {
+        background-color: var(--shopee-orange-dark) !important;
+        border-color: var(--shopee-orange-dark) !important;
+    }
+
+/* OUTLINE BUTTON */
+.btn-outline-primary {
+    color: var(--shopee-orange) !important;
+    border-color: var(--shopee-orange) !important;
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--shopee-orange) !important;
+        color: #fff !important;
+    }
+
+/* LINKS */
+a,
+.text-primary {
+    color: var(--shopee-orange) !important;
+}
+
+    a:hover {
+        color: var(--shopee-orange-dark) !important;
+    }
+
+/* INPUT FOCUS */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--shopee-orange);
+    box-shadow: 0 0 0 0.15rem rgba(255, 102, 0, 0.25);
+}
+
+/* CARD */
+.card {
+    border-radius: 10px !important;
+    border: 1px solid #f0f0f0;
+}
+
+/* HEADINGS */
+.card-title,
+h3,
+h4,
+h5 {
+    color: var(--shopee-orange);
+    font-weight: 600;
+}
+
+/* STAT CARDS */
+.stat-card {
+    border-top: 5px solid var(--shopee-orange);
+}
+
+/* ORANGE BADGE */
+.badge.bg-primary,
+.alert-primary {
+    background-color: var(--shopee-orange) !important;
+}
+
+</style >
+
+html {
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {

@@ -3,23 +3,69 @@
     ViewData["Title"] = "Thông tin tài khoản";
 }
 
+<style>
+    :root {
+        --shopee-orange: #ff6600;
+        --shopee-orange-dark: #e65c00;
+        --shopee-orange-light: #fff4eb;
+    }
+
+    .profile-card {
+        border-radius: 14px;
+        border: 1px solid #ffe6d5;
+        transition: 0.3s;
+    }
+
+        .profile-card:hover {
+            border-color: var(--shopee-orange);
+            box-shadow: 0px 6px 18px rgba(0,0,0,0.06);
+        }
+
+    .profile-label {
+        color: var(--shopee-orange);
+        font-weight: 600;
+    }
+
+    .btn-save {
+        background-color: var(--shopee-orange);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        transition: 0.2s;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+        .btn-save:hover {
+            background-color: var(--shopee-orange-dark);
+            color: #fff;
+        }
+
+    textarea.form-control, input.form-control {
+        border-radius: 8px;
+    }
+</style>
+
+
 <div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
 
-            <div class="card shadow-sm">
+            <h2 class="mb-4 text-center text-orange">@ViewData["Title"]</h2>
+
+            <div class="card shadow-sm profile-card">
                 <div class="card-body p-4">
+
                     <form asp-action="Profile" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                         <div class="mb-3">
-                            <label asp-for="TenDangNhap" class="form-label fw-semibold"></label>
+                            <label asp-for="TenDangNhap" class="form-label profile-label"></label>
                             <input asp-for="TenDangNhap" class="form-control" readonly />
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <label asp-for="Email" class="form-label profile-label"></label>
                             <input asp-for="Email" class="form-control" readonly />
                             <small class="form-text text-muted">Email và Tên đăng nhập không thể thay đổi.</small>
                         </div>
@@ -27,29 +73,31 @@
                         <hr class="my-4" />
 
                         <div class="mb-3">
-                            <label asp-for="HoTen" class="form-label fw-semibold"></label>
+                            <label asp-for="HoTen" class="form-label profile-label"></label>
                             <input asp-for="HoTen" class="form-control" />
                             <span asp-validation-for="HoTen" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="SoDienThoai" class="form-label fw-semibold"></label>
+                            <label asp-for="SoDienThoai" class="form-label profile-label"></label>
                             <input asp-for="SoDienThoai" class="form-control" placeholder="Chưa cập nhật" />
                             <span asp-validation-for="SoDienThoai" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="DiaChi" class="form-label fw-semibold"></label>
+                            <label asp-for="DiaChi" class="form-label profile-label"></label>
                             <textarea asp-for="DiaChi" class="form-control" rows="3" placeholder="Chưa cập nhật"></textarea>
                             <span asp-validation-for="DiaChi" class="text-danger"></span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 mt-3" style="background-color: #ff6600; border:none;">
-                            Lưu thay đổi
+                        <button type="submit" class="btn btn-save w-100 mt-3">
+                            <i class="bi bi-save-fill me-2"></i> Lưu thay đổi
                         </button>
+
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
