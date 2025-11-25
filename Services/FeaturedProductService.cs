@@ -60,5 +60,16 @@ namespace PhuKienCongNghe.Services
             products.RemoveAll(p => p.MaSanPham == maSanPham);
             SaveAll(products);
         }
+        public void Update(int maSanPham, double newPrice)
+        {
+            var products = GetAll();
+            var product = products.FirstOrDefault(p => p.MaSanPham == maSanPham);
+
+            if (product != null)
+            {
+                product.GiaKhuyenMai = newPrice;
+                SaveAll(products); // Lưu lại thay đổi
+            }
+        }
     }
 }

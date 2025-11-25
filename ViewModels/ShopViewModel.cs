@@ -12,5 +12,6 @@ namespace PhuKienCongNghe.ViewModels
         public IPagedList<Sanpham> AllProducts { get; set; }
 
         // (Bạn có thể thêm các List<Danhmuc>... vào đây nếu cần)
+        public List<Sanpham> BestSellers { get; set; }
     }
 }

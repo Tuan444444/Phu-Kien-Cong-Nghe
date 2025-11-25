@@ -18,27 +18,28 @@
     .btn-success:hover {
         background-color: var(--shopee-orange-dark) !important;
         border-color: var(--shopee-orange-dark) !important;
+        color:white !important;
     }
 
 /* OUTLINE BUTTON */
 .btn-outline-primary {
-    color: var(--shopee-orange) !important;
+   
     border-color: var(--shopee-orange) !important;
 }
 
     .btn-outline-primary:hover {
         background-color: var(--shopee-orange) !important;
         color: #fff !important;
-    }
+    }=
 
 /* LINKS */
 a,
 .text-primary {
-    color: var(--shopee-orange) !important;
+   
 }
 
     a:hover {
-        color: var(--shopee-orange-dark) !important;
+        color: var(--shopee-orange-dark) !important;    
     }
 
 /* INPUT FOCUS */
@@ -59,7 +60,7 @@ a,
 h3,
 h4,
 h5 {
-    color: var(--shopee-orange);
+    
     font-weight: 600;
 }
 

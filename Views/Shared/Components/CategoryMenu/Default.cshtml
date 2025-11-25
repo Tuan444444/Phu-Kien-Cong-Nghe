@@ -1,28 +1,41 @@
 ﻿@model IEnumerable<PhuKienCongNghe.Models.Danhmuc>
 
-<div class="shopee-category-bar">
-    <div class="container">
-        <div class="d-flex align-items-center">
+<ul class="dropdown-menu custom-dropdown-menu" style="border-radius: 5px;">
+    @foreach (var category in Model)
+    {
+        <li>
+            <a class="dropdown-item"
+               asp-controller="Product"
+               asp-action="Category"
+               asp-route-id="@category.MaDanhMuc">
+                @category.TenDanhMuc
+            </a>
+        </li>
+    }
+</ul>
 
-            <div class="flex-shrink-0 me-3">
-                <a asp-controller="Product" asp-action="Index"
-                   class="btn-all-products @(ViewContext.RouteData.Values["id"] == null ? "active" : "")">
-                    <i class="bi bi-grid-fill me-2"></i> Tất Cả Sản Phẩm
-                </a>
-            </div>
+<style>
+    /* Tùy chỉnh màu sắc nút Category Menu */
+    .btn-brand {
+        background-color: var(--main-orange);
+        color: white;
+        border: none;
+    }
 
-            <div class="category-horizontal-list">
-                @foreach (var item in Model)
-                {
-                    var isActive = (ViewContext.RouteData.Values["id"]?.ToString() == item.MaDanhMuc.ToString()) ? "active" : "";
+        .btn-brand:hover {
+            background-color: var(--orange-hover);
+            color: white;
+        }
 
-                    <a asp-controller="Product" asp-action="Category" asp-route-id="@item.MaDanhMuc"
-                       class="cat-item @isActive">
-                        @item.TenDanhMuc
-                    </a>
-                }
-            </div>
+    /* Tùy chỉnh menu */
+    .custom-dropdown-menu {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 5px 0;
+    }
 
-        </div>
-    </div>
-</div>
+    .dropdown-item:active {
+        background-color: var(--main-orange);
+        color: white;
+    }
+</style>

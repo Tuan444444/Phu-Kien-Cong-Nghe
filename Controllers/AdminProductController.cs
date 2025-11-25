@@ -260,5 +260,24 @@ namespace PhuKienCongNghe.Controllers
             TempData["ToastMessage"] = "Đã gỡ sản phẩm khỏi khuyến mãi.";
             return RedirectToAction("Promotions");
         }
+        // 8. EDIT PROMOTION (POST - Cập nhật giá khuyến mãi)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditPromotion(int productId, double newPrice)
+        {
+            if (productId > 0 && newPrice >= 0)
+            {
+                // Gọi hàm Update vừa viết trong Service
+                _featuredService.Update(productId, newPrice);
+
+                TempData["ToastMessage"] = "Cập nhật giá khuyến mãi thành công!";
+            }
+            else
+            {
+                TempData["ToastError"] = "Lỗi: Dữ liệu không hợp lệ.";
+            }
+
+            return RedirectToAction("Promotions");
+        }
     }
 }

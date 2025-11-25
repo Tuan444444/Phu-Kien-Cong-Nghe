@@ -1,4 +1,4 @@
-﻿@model PhuKienCongNghe.ViewModels.AdminFeaturedViewModel
+﻿    @model PhuKienCongNghe.ViewModels.AdminFeaturedViewModel
 @{
     ViewData["Title"] = "Quản lý SP Nổi bật & Khuyến mãi";
     Layout = "_AdminLayout";
@@ -81,6 +81,14 @@
                         </td>
 
                         <td class="text-end">
+                            <button type="button" class="btn btn-sm btn-outline-primary me-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editPromotionModal"
+                                    data-id="@item.MaSanPham"
+                                    data-name="@item.Sanpham.TenSanPham"
+                                    data-price="@item.GiaKhuyenMai">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </button>
                             <form asp-action="DeletePromotion" asp-route-id="@item.MaSanPham" method="post" onsubmit="return confirm('Bạn có chắc muốn gỡ sản phẩm này?');" asp-antiforgery="true">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-trash"></i> Xóa
@@ -99,7 +107,35 @@
         </table>
     </div>
 </div>
+<div class="modal fade" id="editPromotionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="EditPromotion" method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Cập nhật giá khuyến mãi</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="productId" id="edit-id" />
 
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Sản phẩm:</label>
+                        <input type="text" class="form-control-plaintext fw-bold fs-5" id="edit-name" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Giá khuyến mãi mới (VNĐ):</label>
+                        <input type="number" name="newPrice" id="edit-price" class="form-control form-control-lg text-danger fw-bold" required min="0" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @{
@@ -129,5 +165,26 @@
                 }
             });
         });
+         var editModal = document.getElementById('editPromotionModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function (event) {
+                // Nút nào kích hoạt modal?
+                var button = event.relatedTarget;
+
+                // Lấy thông tin từ data-attribute của nút đó
+                var id = button.getAttribute('data-id');
+                var name = button.getAttribute('data-name');
+                var price = button.getAttribute('data-price');
+
+                // Đổ dữ liệu vào các ô input trong modal
+                var modalIdInput = editModal.querySelector('#edit-id');
+                var modalNameInput = editModal.querySelector('#edit-name');
+                var modalPriceInput = editModal.querySelector('#edit-price');
+
+                modalIdInput.value = id;
+                modalNameInput.value = name;
+                modalPriceInput.value = price;
+            });
+        }
     </script>
 }

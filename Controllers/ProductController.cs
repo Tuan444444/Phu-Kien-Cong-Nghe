@@ -58,8 +58,44 @@ namespace PhuKienCongNghe.Controllers
             }
             else
             {
-                viewModel.FeaturedProducts = new List<SanPhamNoiBat>();
+                // Trang 2 trở đi không cần hiện lại bảng xếp hạng này
+                viewModel.BestSellers = new List<Sanpham>();
             }
+
+            // --- B. SẢN PHẨM BÁN CHẠY (MỚI THÊM) ---
+            // Chỉ tính toán khi ở trang chủ (page = 1 hoặc null) để tối ưu hiệu năng
+            if (page == null || page == 1)
+            {
+                // 1. Lấy Top 7 ID sản phẩm bán chạy nhất
+                // Tại sao lấy 7? Để hiển thị: 1 sản phẩm TOP 1 to đùng + 6 sản phẩm nhỏ bên cạnh (2 hàng x 3 cột) -> Đẹp đội hình.
+                var topSellingIds = _context.Chitietdonhangs
+                    .GroupBy(ct => ct.MaSanPham)
+                    .Select(g => new {
+                        MaSanPham = g.Key,
+                        TongBan = g.Sum(x => x.SoLuong)
+                    })
+                    .OrderByDescending(x => x.TongBan)
+                    .Take(7) // <--- SỬA THÀNH 7 ĐỂ KHỚP GIAO DIỆN
+                    .Select(x => x.MaSanPham)
+                    .ToList();
+
+                // 2. Lấy thông tin chi tiết sản phẩm từ bảng Sanpham
+                var bestSellers = _context.Sanphams
+                    .Where(p => topSellingIds.Contains(p.MaSanPham))
+                    .ToList();
+
+                // 3. Sắp xếp lại danh sách theo đúng thứ tự bán chạy (Top 1 lên đầu)
+                // (Vì lệnh Where bên trên có thể làm xáo trộn thứ tự)
+                viewModel.BestSellers = bestSellers
+                    .OrderBy(p => topSellingIds.IndexOf(p.MaSanPham))
+                    .ToList();
+            }
+            else
+            {
+                // Trang 2 trở đi không cần hiện lại bảng xếp hạng này
+                viewModel.BestSellers = new List<Sanpham>();
+            }
+          
 
             // --- B. LẤY TẤT CẢ SẢN PHẨM ---
             int pageSize = 12;
